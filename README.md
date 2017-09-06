@@ -24,7 +24,7 @@ This code is licensed under the The MIT License (MIT). Please see the LICENSE fi
 
 ## Installation
 
-Just clone the repo and open www/index.html with your favourite browser.
+Just clone the repo and open `www/index.html` with your favourite browser.
 
 It can work locally, without an internet connection.
 
