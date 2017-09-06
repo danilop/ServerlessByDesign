@@ -89,15 +89,25 @@ var renderingRules = {
       }
     },
     event: function (status, id, idFrom) {
-      status.template.resources.Resources[id].Properties.Events['Bucket' + idFrom] = {
-        Type: "S3",
-        Properties: {
-          Bucket: "!Ref " + idFrom,
-          Events: "s3:ObjectCreated:*"
-        }
-      };
-      // To avoid circular dependencies with a more specific policy 
-      status.template.resources.Resources[id].Properties.Policies.push('AmazonS3ReadOnlyAccess');
+      if (status.model.nodes[id].type === 'fn') {
+        status.template.functions[id].events.push({
+          s3: {
+            bucket: idFrom,
+            event: "s3:ObjectCreated:*"
+          }
+        });
+      } else {
+        status.template.resources.Resources[id].Properties.Events['Bucket' + idFrom] = {
+          Type: "S3",
+          Properties: {
+            Bucket: "!Ref " + idFrom,
+            Events: "s3:ObjectCreated:*"
+          }
+        };
+
+        // To avoid circular dependencies with a more specific policy 
+        status.template.resources.Resources[id].Properties.Policies.push('AmazonS3ReadOnlyAccess');
+      }
     },
     policy: function (status, id, idTo) {
       return {
@@ -143,14 +153,20 @@ var renderingRules = {
       };
     },
     event: function (status, id, idFrom) {
-      status.template.resources.Resources[id].Properties.Events['Table' + idFrom] = {
-        Type: "DynamoDB",
-        Properties: {
-          Stream: "!GetAtt " + idFrom + ".StreamArn",
-          StartingPosition: "TRIM_HORIZON",
-          BatchSize: 10
-        }
-      };
+      if (status.model.nodes[id].type === 'fn') {
+        status.template.functions[id].events.push({
+          stream: `arn:aws:dynamodb:REGION:XXXXXX:table/${idFrom}/stream/1970-01-01T00:00:00.000`
+        });
+      } else { 
+        status.template.resources.Resources[id].Properties.Events['Table' + idFrom] = {
+          Type: "DynamoDB",
+          Properties: {
+            Stream: "!GetAtt " + idFrom + ".StreamArn",
+            StartingPosition: "TRIM_HORIZON",
+            BatchSize: 10
+          }
+        };
+      }
     },
     policy: function (status, id, idTo) {
       return {
@@ -165,13 +181,22 @@ var renderingRules = {
       // Nothing to do, created by the API event
     },
     event: function (status, id, idFrom) {
-      status.template.resources.Resources[id].Properties.Events['Api' + idFrom] = {
-        Type: "Api",
-        Properties: {
-          Path: "/{proxy+}",
-          Method: "ANY"
-        }
-      };
+      if (status.model.nodes[id].type === 'fn') {
+        status.template.functions[id].events.push({
+          http: {
+            path: "/{proxy+}",
+            method: "get"
+          }
+        });
+      } else { // Currently this doesn't execute but could if Step Functions handled events
+        status.template.resources.Resources[id].Properties.Events['Api' + idFrom] = {
+          Type: "Api",
+          Properties: {
+            Path: "/{proxy+}",
+            Method: "ANY"
+          }
+        };
+      }
     },
     policy: function (status, id, idTo) {
       return {
@@ -191,14 +216,20 @@ var renderingRules = {
       };
     },
     event: function (status, id, idFrom) {
-      status.template.resources.Resources[id].Properties.Events['Stream' + idFrom] = {
-        Type: "Kinesis",
-        Properties: {
-          Stream: "!GetAtt " + idFrom + ".Arn",
-          StartingPosition: "TRIM_HORIZON",
-          BatchSize: 10
-        }
-      };
+      if (status.model.nodes[id].type === 'fn') {
+        status.template.functions[id].events.push({
+          stream: `arn:aws:kinesis:REGION:XXXXXX:stream/${idFrom}`
+        });
+      } else {
+        status.template.resources.Resources[id].Properties.Events['Stream' + idFrom] = {
+          Type: "Kinesis",
+          Properties: {
+            Stream: "!GetAtt " + idFrom + ".Arn",
+            StartingPosition: "TRIM_HORIZON",
+            BatchSize: 10
+          }
+        };
+      }      
     },
     policy: function (status, id, idTo) {
       return {
@@ -462,12 +493,18 @@ var renderingRules = {
       // Nothing to do
     },
     event: function (status, id, idFrom) {
-      status.template.resources.Resources[id].Properties.Events['Schedule' + idFrom] = {
-        Type: "Schedule",
-        Properties: {
-          Schedule: "rate(5 minutes)"
-        }
-      };
+      if (status.model.nodes[id].type === 'fn') {
+        status.template.functions[id].events.push({
+          schedule: "rate(5 minutes)"
+        });
+      } else {
+        status.template.resources.Resources[id].Properties.Events['Schedule' + idFrom] = {
+          Type: "Schedule",
+          Properties: {
+            Schedule: "rate(5 minutes)"
+          }
+        };  
+      }      
     },
     policy: function () { } // This has no sense
   },
@@ -478,12 +515,18 @@ var renderingRules = {
       };
     },
     event: function (status, id, idFrom) {
-      status.template.resources.Resources[id].Properties.Events['Topic' + idFrom] = {
-        Type: "SNS",
-        Properties: {
-          Topic: "!Ref " + idFrom
-        }
-      };
+      if (status.model.nodes[id].type === 'fn') {
+        status.template.functions[id].events.push({
+          sns: idFrom
+        });
+      } else {
+        status.template.resources.Resources[id].Properties.Events['Topic' + idFrom] = {
+          Type: "SNS",
+          Properties: {
+            Topic: "!Ref " + idFrom
+          }
+        };
+      }
     },
     policy: function (status, id, idTo) {
       return {
@@ -509,7 +552,7 @@ var renderingRules = {
         runtimes[status.runtime].startingCode;
 
       if (node.from.length > 0) { // There are triggers for this function
-        status.template.resources.Resources[node.id].Properties.Events = {}
+        status.template.functions[node.id].events = []
         node.from.forEach(function (idFrom) {
           console.log("Trigger " + idFrom + " -> " + node.id);
           renderingRules[status.model.nodes[idFrom].type].event(status, node.id, idFrom);
@@ -527,7 +570,10 @@ var renderingRules = {
               .policy(status, node.id, idTo)
           );
         });
-        status.template.resources.Resources[node.id].Properties.Policies.push(policy);
+
+        if (status.model.nodes[node.id].type !== 'fn') {
+          status.template.resources.Resources[node.id].Properties.Policies.push(policy);
+        }
       }
     },
     event: function () { }, // Nothing to do, this is not a trigger, but a fn to fn invocation
@@ -547,7 +593,7 @@ var renderingRules = {
           // The DefinitionString is added later
           // This role is automatically created by the AWS console
           // the first time you create a state machine in a region
-          RoleArn: "!Sub arn:aws:iam::${AWS::AccountId}:role/service-role/StatesExecutionRole-${AWS::Region}"
+          RoleArn: "arn:aws:iam::${AWS::AccountId}:role/service-role/StatesExecutionRole-${AWS::Region}"
         },
       };
       var definitionString = {
