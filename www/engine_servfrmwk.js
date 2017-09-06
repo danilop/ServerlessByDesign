@@ -14,7 +14,7 @@ jspm_packages
     startingCode:
     `'use strict';
 
-module.exports.hello = (event, context, callback) => {
+module.exports.handler = (event, context, callback) => {
   const response = {
     statusCode: 200,
     body: JSON.stringify({
@@ -57,7 +57,7 @@ var/
     startingCode:
     `import json
 
-def hello(event, context):
+def handler(event, context):
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
         "input": event
@@ -495,45 +495,42 @@ var renderingRules = {
   },
   fn: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
-        Type: "AWS::Serverless::Function",
-        Properties: {
-          //        FunctionName: node.id,
-          Handler: node.id + "." + runtimes[status.runtime].handler,
-          Runtime: status.runtime,
-          CodeUri: ".",
-          Policies: []
-        }
-      };
-      if (node.description !== '') {
-        status.template.Resources[node.id].Properties.Description = node.description;
-      }
+      // Check for and build a .gitignore if we haven't already
       if (!status.files[".gitignore"]) {
         status.files[".gitignore"] = runtimes[status.runtime].gitignore;
       }
+      status.template.functions[node.id] = {
+        handler: node.id + "." + runtimes[status.runtime].handler
+      };
+      if (node.description !== '') {
+        status.template.functions[node.id].description = node.description;
+      }
       status.files[node.id + '.' + runtimes[status.runtime].fileExtension] =
         runtimes[status.runtime].startingCode;
-      if (node.from.length > 0) { // There are triggers for this function
-        status.template.Resources[node.id].Properties.Events = {}
-        node.from.forEach(function (idFrom) {
-          console.log("Trigger " + idFrom + " -> " + node.id);
-          renderingRules[status.model.nodes[idFrom].type].event(status, node.id, idFrom);
-        });
-      }
-      if (node.to.length > 0) { // There are resources target of this function
-        var policy = {
-          Version: "2012-10-17",
-          Statement: []
-        };
-        node.to.forEach(function (idTo) {
-          console.log("Policy " + node.id + " -> " + idTo);
-          policy.Statement.push(
-            renderingRules[status.model.nodes[idTo].type]
-              .policy(status, node.id, idTo)
-          );
-        });
-        status.template.Resources[node.id].Properties.Policies.push(policy);
-      }
+
+      // Done to here.
+
+      // if (node.from.length > 0) { // There are triggers for this function
+      //   status.template.Resources[node.id].Properties.Events = {}
+      //   node.from.forEach(function (idFrom) {
+      //     console.log("Trigger " + idFrom + " -> " + node.id);
+      //     renderingRules[status.model.nodes[idFrom].type].event(status, node.id, idFrom);
+      //   });
+      // }
+      // if (node.to.length > 0) { // There are resources target of this function
+      //   var policy = {
+      //     Version: "2012-10-17",
+      //     Statement: []
+      //   };
+      //   node.to.forEach(function (idTo) {
+      //     console.log("Policy " + node.id + " -> " + idTo);
+      //     policy.Statement.push(
+      //       renderingRules[status.model.nodes[idTo].type]
+      //         .policy(status, node.id, idTo)
+      //     );
+      //   });
+      //   status.template.Resources[node.id].Properties.Policies.push(policy);
+      // }
     },
     event: function () { }, // Nothing to do, this is not a trigger, but a fn to fn invocation
     policy: function (status, id, idTo) {
@@ -718,9 +715,18 @@ function render(model, runtime) {
   console.log('Using Serverless Framework...');
   var files = {};
   var template = {
-    AWSTemplateFormatVersion: "2010-09-09",
-    Transform: "AWS::Serverless-2016-10-31"
+    service: "serverless",
+    provider: {
+      name: "aws",
+      runtime: runtime
+    },
+    functions: { },
+    resources: { 
+      Resources: { },
+      Outputs: { }
+    }
   };
+
   var status = {
     model: model,
     runtime: runtime,
@@ -728,7 +734,6 @@ function render(model, runtime) {
     template: template
   }
 
-  template.Resources = {};
   for (var id in model.nodes) {
     var node = model.nodes[id];
     renderingRules[node.type].resource(status, node);
