@@ -1,6 +1,6 @@
 # Serverless By Design
 
-Welcome to _Serverless by Design_ - Design. Build. Repeat.
+This is a visual approach to serverless development:
 
 - An application is a network of _nodes_ (serverless resources, such as Lambda functions or S3 buckets) connected by _edges_ (their relationships, for example a trigger or a data flow)
 - _Edit_ an application adding nodes and edges following an _event-driven_ design
@@ -13,6 +13,7 @@ Welcome to _Serverless by Design_ - Design. Build. Repeat.
 
 A live version is available at: http://sbd.danilop.net
 
+Think. Build. Repeat.
 
 ## License
 
