@@ -1,0 +1,286 @@
+{
+    "nodes": [
+        {
+            "id": "MyIdentity",
+            "x": -374.203125,
+            "y": -112,
+            "label": "Cognito Identity\nMyIdentity",
+            "title": "My Identity",
+            "model": {
+                "type": "cognitoIdentity",
+                "description": "My Identity"
+            },
+            "group": "cognitoIdentity",
+            "shadow": false
+        },
+        {
+            "id": "MyApi",
+            "x": -316.203125,
+            "y": 39,
+            "label": "API Gateway\nMyApi",
+            "title": "My REST API",
+            "model": {
+                "type": "api",
+                "description": "My REST API"
+            },
+            "group": "api",
+            "shadow": false
+        },
+        {
+            "id": "MyBackEnd",
+            "x": -153.203125,
+            "y": 54,
+            "label": "Lambda Function\nMyBackEnd",
+            "title": "My Back End Function",
+            "model": {
+                "type": "fn",
+                "description": "My Back End Function"
+            },
+            "group": "fn",
+            "shadow": false
+        },
+        {
+            "id": "MyTable",
+            "x": 12.796875,
+            "y": -126,
+            "label": "DynamoDB Table\nMyTable",
+            "title": "My Table",
+            "model": {
+                "type": "table",
+                "description": "My Table"
+            },
+            "group": "table",
+            "shadow": false
+        },
+        {
+            "id": "MyBucket",
+            "x": 40.796875,
+            "y": 46,
+            "label": "S3 Bucket\nMyBucket",
+            "title": "My Bucket",
+            "model": {
+                "type": "bucket",
+                "description": "My Bucket"
+            },
+            "group": "bucket",
+            "shadow": false
+        },
+        {
+            "id": "MyStream",
+            "x": 26.796875,
+            "y": 199,
+            "label": "Kinesis Stream\nMyStream",
+            "title": "My Stream",
+            "model": {
+                "type": "stream",
+                "description": "My Stream"
+            },
+            "group": "stream",
+            "shadow": false
+        },
+        {
+            "id": "MyAnalytics",
+            "x": 142.796875,
+            "y": 195,
+            "label": "Kinesis Analytics\nMyAnalytics",
+            "title": "My Analytics Stream",
+            "model": {
+                "type": "analyticsStream",
+                "description": "My Analytics Stream"
+            },
+            "group": "analyticsStream",
+            "shadow": false
+        },
+        {
+            "id": "MyFirehose",
+            "x": 257.796875,
+            "y": 209,
+            "label": "Kinesis Firehose\nMyFirehose",
+            "title": "My Firehose Stream",
+            "model": {
+                "type": "deliveryStream",
+                "description": "My Firehose Stream"
+            },
+            "group": "deliveryStream",
+            "shadow": false
+        },
+        {
+            "id": "MyDBProcessor",
+            "x": 198.61688250277794,
+            "y": -199.64783765544206,
+            "label": "Lambda Function\nMyDBProcessor",
+            "title": "My Database Processor Function",
+            "model": {
+                "type": "fn",
+                "description": "My Database Processor Function"
+            },
+            "group": "fn",
+            "shadow": false
+        },
+        {
+            "id": "MySchedule",
+            "x": -396.1007836356701,
+            "y": -203.7255377556265,
+            "label": "Schedule\nMySchedule",
+            "title": "My Schedule",
+            "model": {
+                "type": "schedule",
+                "description": "My Schedule"
+            },
+            "group": "schedule",
+            "shadow": false
+        },
+        {
+            "id": "MyTopic",
+            "x": -372.0039122190005,
+            "y": -65.71618327833689,
+            "label": "SNS Topic\nMyTopic",
+            "title": "My Topic",
+            "model": {
+                "type": "topic",
+                "description": "My Topic"
+            },
+            "group": "topic",
+            "shadow": false
+        },
+        {
+            "id": "MyScheduledActivities",
+            "x": -433.3414030977959,
+            "y": -185.10522802456362,
+            "label": "Lambda Function\nMyScheduledActivities",
+            "title": "My Scheduled Activities",
+            "model": {
+                "type": "fn",
+                "description": "My Scheduled Activities"
+            },
+            "group": "fn",
+            "shadow": false
+        },
+        {
+            "id": "MyStateMachine",
+            "x": -820.221039971391,
+            "y": -176.89564234817388,
+            "label": "Step Function\nMyStateMachine",
+            "title": "My State Machine",
+            "model": {
+                "type": "stepFn",
+                "description": "My State Machine"
+            },
+            "group": "stepFn",
+            "shadow": false
+        }
+    ],
+    "edges": [
+        {
+            "from": "MyIdentity",
+            "to": "MyApi",
+            "label": "authorize",
+            "color": "Blue",
+            "id": "aadc8687-1509-41fa-96b8-1eef0d3f343e"
+        },
+        {
+            "from": "MyApi",
+            "to": "MyBackEnd",
+            "label": "integration",
+            "color": "Blue",
+            "id": "064f6cb8-0113-4f1d-ad2a-7c46316671cd"
+        },
+        {
+            "from": "MyBackEnd",
+            "to": "MyTable",
+            "label": "read/write",
+            "color": "Green",
+            "dashes": true,
+            "id": "cfb93b86-400e-4fce-b3cb-7d5874a24372"
+        },
+        {
+            "from": "MyBackEnd",
+            "to": "MyBucket",
+            "label": "read/write",
+            "color": "Green",
+            "dashes": true,
+            "id": "39877ecc-1b3b-4f3a-be7e-27a7eac32753"
+        },
+        {
+            "from": "MyBackEnd",
+            "to": "MyStream",
+            "label": "put",
+            "color": "Green",
+            "dashes": true,
+            "id": "971f5ea3-f5b2-4907-8cd3-6a10c799fbdc"
+        },
+        {
+            "from": "MyStream",
+            "to": "MyAnalytics",
+            "label": "input",
+            "color": "Blue",
+            "id": "505b6654-80fd-4ea4-a0b3-c335efe8321b"
+        },
+        {
+            "from": "MyAnalytics",
+            "to": "MyFirehose",
+            "label": "output",
+            "color": "Blue",
+            "id": "96cacf24-7571-47cd-9601-8968fdd24216"
+        },
+        {
+            "from": "MyFirehose",
+            "to": "MyBucket",
+            "label": "destination",
+            "color": "Blue",
+            "id": "1ae0b94c-014b-4f01-9282-5693f9f757b0"
+        },
+        {
+            "from": "MyTable",
+            "to": "MyDBProcessor",
+            "label": "stream",
+            "color": "Blue",
+            "id": "a78e277f-30bc-4a66-8d8e-dca5e6f51391"
+        },
+        {
+            "from": "MyDBProcessor",
+            "to": "MyBucket",
+            "label": "read/write",
+            "color": "Green",
+            "dashes": true,
+            "id": "719bf15e-a4a0-47a5-a4de-448c5d51fc10"
+        },
+        {
+            "from": "MySchedule",
+            "to": "MyScheduledActivities",
+            "label": "target",
+            "color": "Blue",
+            "id": "3bee92fd-f2b7-4cc0-a6da-b87f5e73eca4"
+        },
+        {
+            "from": "MyScheduledActivities",
+            "to": "MyTable",
+            "label": "read/write",
+            "color": "Green",
+            "dashes": true,
+            "id": "6979d2a2-54c9-4dd8-b69d-04e07a8c4274"
+        },
+        {
+            "from": "MyTopic",
+            "to": "MyScheduledActivities",
+            "label": "trigger",
+            "color": "Blue",
+            "id": "fc9492bd-6de5-4888-898a-2ff04c1a0c6c"
+        },
+        {
+            "from": "MyScheduledActivities",
+            "to": "MyStateMachine",
+            "label": "activity",
+            "color": "Green",
+            "dashes": true,
+            "id": "ab9c21ef-5dc7-49ed-84ba-e2b67f3ce962"
+        },
+        {
+            "from": "MyStateMachine",
+            "to": "MyBackEnd",
+            "label": "invoke",
+            "color": "Blue",
+            "id": "698e9074-e122-4d78-a91d-4b2eb593dfbc"
+        }
+    ]
+}
