@@ -30,7 +30,7 @@ It can work locally, without an internet connection.
 
 ## Usage
 
-Here there are a few examples to help you start:
+Here are a few examples to help you start:
 
 - [Basic API](https://sbd.danilop.net/?import=examples/basic-api.json)
 - [S3 Processing](https://sbd.danilop.net/?import=examples/s3-processing.json)
