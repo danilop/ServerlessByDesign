@@ -84,12 +84,12 @@ def handler(event, context):
 var renderingRules = {
   bucket: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::S3::Bucket"
       }
     },
     event: function (status, id, idFrom) {
-      status.template.Resources[id].Properties.Events['Bucket' + idFrom] = {
+      status.template.resources.Resources[id].Properties.Events['Bucket' + idFrom] = {
         Type: "S3",
         Properties: {
           Bucket: "!Ref " + idFrom,
@@ -97,7 +97,7 @@ var renderingRules = {
         }
       };
       // To avoid circular dependencies with a more specific policy 
-      status.template.Resources[id].Properties.Policies.push('AmazonS3ReadOnlyAccess');
+      status.template.resources.Resources[id].Properties.Policies.push('AmazonS3ReadOnlyAccess');
     },
     policy: function (status, id, idTo) {
       return {
@@ -109,7 +109,7 @@ var renderingRules = {
   },
   table: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::DynamoDB::Table",
         Properties: {
           AttributeDefinitions: [
@@ -143,7 +143,7 @@ var renderingRules = {
       };
     },
     event: function (status, id, idFrom) {
-      status.template.Resources[id].Properties.Events['Table' + idFrom] = {
+      status.template.resources.Resources[id].Properties.Events['Table' + idFrom] = {
         Type: "DynamoDB",
         Properties: {
           Stream: "!GetAtt " + idFrom + ".StreamArn",
@@ -165,7 +165,7 @@ var renderingRules = {
       // Nothing to do, created by the API event
     },
     event: function (status, id, idFrom) {
-      status.template.Resources[id].Properties.Events['Api' + idFrom] = {
+      status.template.resources.Resources[id].Properties.Events['Api' + idFrom] = {
         Type: "Api",
         Properties: {
           Path: "/{proxy+}",
@@ -183,7 +183,7 @@ var renderingRules = {
   },
   stream: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::Kinesis::Stream",
         Properties: {
           ShardCount: 1
@@ -191,7 +191,7 @@ var renderingRules = {
       };
     },
     event: function (status, id, idFrom) {
-      status.template.Resources[id].Properties.Events['Stream' + idFrom] = {
+      status.template.resources.Resources[id].Properties.Events['Stream' + idFrom] = {
         Type: "Kinesis",
         Properties: {
           Stream: "!GetAtt " + idFrom + ".Arn",
@@ -227,7 +227,7 @@ var renderingRules = {
       var deliveryPolicyId = node.id + "DeliveryPolicy";
       var deliveryRoleId = node.id + "DeliveryRole";
       // Create the Delivery Strem
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         DependsOn: [deliveryPolicyId],
         Type: 'AWS::KinesisFirehose::DeliveryStream',
         Properties: {
@@ -244,7 +244,7 @@ var renderingRules = {
         }
       };
       if (targetFnId !== null) {
-        status.template.Resources[node.id].Properties
+        status.template.resources.Resources[node.id].Properties
           .ExtendedS3DestinationConfiguration.ProcessingConfiguration = {
             Enabled: true,
             Processors: [{
@@ -257,7 +257,7 @@ var renderingRules = {
           }
       }
       // Create a delivery role
-      status.template.Resources[deliveryRoleId] = {
+      status.template.resources.Resources[deliveryRoleId] = {
         Type: 'AWS::IAM::Role',
         Properties: {
           AssumeRolePolicyDocument: {
@@ -276,7 +276,7 @@ var renderingRules = {
         }
       };
       // Create a delivery policy for the role
-      status.template.Resources[deliveryPolicyId] = {
+      status.template.resources.Resources[deliveryPolicyId] = {
         Type: 'AWS::IAM::Policy',
         Properties: {
           PolicyName: "firehose_delivery_policy",
@@ -345,7 +345,7 @@ var renderingRules = {
       var analyticsStreamRoleId = node.id + "Role";
       var analyticsStreamOutputId = node.id + "Outputs";
 
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::KinesisAnalytics::Application",
         Properties: {
           ApplicationName: node.id,
@@ -371,12 +371,12 @@ var renderingRules = {
       };
 
       if (node.description !== '') {
-        status.template.Resources[node.id]
+        status.template.resources.Resources[node.id]
           .Properties.ApplicationDescription = node.description;
       }
 
       if (inputStreamId !== null) {
-        status.template.Resources[node.id]
+        status.template.resources.Resources[node.id]
           .Properties.Inputs[0].KinesisStreamsInput = {
             ResourceARN: "!GetAtt " + inputStreamId + ".Arn",
             RoleARN: "!GetAtt " + analyticsStreamRoleId + ".Arn"
@@ -384,7 +384,7 @@ var renderingRules = {
       }
 
       if (inputDeliveryStreamId !== null) {
-        status.template.Resources[node.id]
+        status.template.resources.Resources[node.id]
           .Properties.Inputs[0].KinesisFirehoseInput = {
             // Kinesis Firehose ARN syntax (can't use GetAtt)
             // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
@@ -393,7 +393,7 @@ var renderingRules = {
           };
       }
 
-      status.template.Resources[analyticsStreamRoleId] = {
+      status.template.resources.Resources[analyticsStreamRoleId] = {
         Type: "AWS::IAM::Role",
         Properties: {
           AssumeRolePolicyDocument: {
@@ -421,7 +421,7 @@ var renderingRules = {
         }
       };
 
-      status.template.Resources[analyticsStreamOutputId] = {
+      status.template.resources.Resources[analyticsStreamOutputId] = {
         Type: "AWS::KinesisAnalytics::ApplicationOutput",
         DependsOn: node.id,
         Properties: {
@@ -436,7 +436,7 @@ var renderingRules = {
       };
 
       if (outputStreamId !== null) {
-        status.template.Resources[analyticsStreamOutputId]
+        status.template.resources.Resources[analyticsStreamOutputId]
           .Properties.Output.KinesisStreamsOutput = {
             ResourceARN: "!GetAtt " + outputStreamId + ".Arn",
             RoleARN: "!GetAtt " + analyticsStreamRoleId + ".Arn"
@@ -444,7 +444,7 @@ var renderingRules = {
       }
 
       if (outputDeliveryStreamId !== null) {
-        status.template.Resources[analyticsStreamOutputId]
+        status.template.resources.Resources[analyticsStreamOutputId]
           .Properties.Output.KinesisFirehoseOutput = {
             // Kinesis Firehose ARN syntax (can't use GetAtt)
             // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
@@ -462,7 +462,7 @@ var renderingRules = {
       // Nothing to do
     },
     event: function (status, id, idFrom) {
-      status.template.Resources[id].Properties.Events['Schedule' + idFrom] = {
+      status.template.resources.Resources[id].Properties.Events['Schedule' + idFrom] = {
         Type: "Schedule",
         Properties: {
           Schedule: "rate(5 minutes)"
@@ -473,12 +473,12 @@ var renderingRules = {
   },
   topic: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::SNS::Topic"
       };
     },
     event: function (status, id, idFrom) {
-      status.template.Resources[id].Properties.Events['Topic' + idFrom] = {
+      status.template.resources.Resources[id].Properties.Events['Topic' + idFrom] = {
         Type: "SNS",
         Properties: {
           Topic: "!Ref " + idFrom
@@ -508,29 +508,27 @@ var renderingRules = {
       status.files[node.id + '.' + runtimes[status.runtime].fileExtension] =
         runtimes[status.runtime].startingCode;
 
-      // Done to here.
-
-      // if (node.from.length > 0) { // There are triggers for this function
-      //   status.template.Resources[node.id].Properties.Events = {}
-      //   node.from.forEach(function (idFrom) {
-      //     console.log("Trigger " + idFrom + " -> " + node.id);
-      //     renderingRules[status.model.nodes[idFrom].type].event(status, node.id, idFrom);
-      //   });
-      // }
-      // if (node.to.length > 0) { // There are resources target of this function
-      //   var policy = {
-      //     Version: "2012-10-17",
-      //     Statement: []
-      //   };
-      //   node.to.forEach(function (idTo) {
-      //     console.log("Policy " + node.id + " -> " + idTo);
-      //     policy.Statement.push(
-      //       renderingRules[status.model.nodes[idTo].type]
-      //         .policy(status, node.id, idTo)
-      //     );
-      //   });
-      //   status.template.Resources[node.id].Properties.Policies.push(policy);
-      // }
+      if (node.from.length > 0) { // There are triggers for this function
+        status.template.resources.Resources[node.id].Properties.Events = {}
+        node.from.forEach(function (idFrom) {
+          console.log("Trigger " + idFrom + " -> " + node.id);
+          renderingRules[status.model.nodes[idFrom].type].event(status, node.id, idFrom);
+        });
+      }
+      if (node.to.length > 0) { // There are resources target of this function
+        var policy = {
+          Version: "2012-10-17",
+          Statement: []
+        };
+        node.to.forEach(function (idTo) {
+          console.log("Policy " + node.id + " -> " + idTo);
+          policy.Statement.push(
+            renderingRules[status.model.nodes[idTo].type]
+              .policy(status, node.id, idTo)
+          );
+        });
+        status.template.resources.Resources[node.id].Properties.Policies.push(policy);
+      }
     },
     event: function () { }, // Nothing to do, this is not a trigger, but a fn to fn invocation
     policy: function (status, id, idTo) {
@@ -543,7 +541,7 @@ var renderingRules = {
   },
   stepFn: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::StepFunctions::StateMachine",
         Properties: {
           // The DefinitionString is added later
@@ -564,7 +562,7 @@ var renderingRules = {
         }
       };
       // The DefinitionString must be a string with JSON syntax within the template
-      status.template.Resources[node.id].Properties.DefinitionString =
+      status.template.resources.Resources[node.id].Properties.DefinitionString =
         JSON.stringify(definitionString, null, 2);
     },
     event: function () { }, // Nothing to do
@@ -588,13 +586,13 @@ var renderingRules = {
     resource: function (status, node) {
       var cognitoUnauthRoleId = node.id + "CognitoUnauthRole";
       var cognitoUnauthPolicyId = node.id + "CognitoUnauthPolicy";
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::Cognito::IdentityPool",
         Properties: {
           AllowUnauthenticatedIdentities: true // TODO Maybe this is not a secure default ???
         }
       }
-      status.template.Resources[cognitoUnauthRoleId] = {
+      status.template.resources.Resources[cognitoUnauthRoleId] = {
         Type: 'AWS::IAM::Role',
         Properties: {
           AssumeRolePolicyDocument: {
@@ -616,7 +614,7 @@ var renderingRules = {
         }
       }
       // Create a delivery policy for the role
-      status.template.Resources[cognitoUnauthPolicyId] = {
+      status.template.resources.Resources[cognitoUnauthPolicyId] = {
         Type: 'AWS::IAM::Policy',
         Properties: {
           PolicyName: "cognito_unauth_policy",
@@ -630,7 +628,7 @@ var renderingRules = {
       // Output resources
       node.to.forEach(function (idTo) {
         var node_to = status.model.nodes[idTo];
-        status.template.Resources[cognitoUnauthPolicyId]
+        status.template.resources.Resources[cognitoUnauthPolicyId]
           .Properties.PolicyDocument.Statement.push(
           renderingRules[status.model.nodes[idTo].type]
             .policy(status, node.id, idTo)
@@ -642,7 +640,7 @@ var renderingRules = {
   },
   iotRule: {
     resource: function (status, node) {
-      status.template.Resources[node.id] = {
+      status.template.resources.Resources[node.id] = {
         Type: "AWS::IoT::TopicRule",
         Properties: {
           TopicRulePayload: {
@@ -653,14 +651,14 @@ var renderingRules = {
         }
       }
       if (node.description !== '') {
-        status.template.Resources[node.id].Properties.TopicRulePayload.Description = node.description;
+        status.template.resources.Resources[node.id].Properties.TopicRulePayload.Description = node.description;
       }
       // Output resources
       node.to.forEach(function (idTo) {
         var node_to = status.model.nodes[idTo];
         switch (node_to.type) {
           case 'fn':
-            status.template.Resources[node.id].Properties.TopicRulePayload.Actions.push({
+            status.template.resources.Resources[node.id].Properties.TopicRulePayload.Actions.push({
               Lambda: {
                 FunctionArn: "!GetAtt " + idTo + ".Arn"
               }
@@ -668,13 +666,13 @@ var renderingRules = {
             break;
           case 'iotRule': // republish
             var republishRoleId = idTo + "PublishRole";
-            status.template.Resources[node.id].Properties.TopicRulePayload.Actions.push({
+            status.template.resources.Resources[node.id].Properties.TopicRulePayload.Actions.push({
               Republish: {
                 Topic: "Output/Topic",
                 RoleArn: "!GetAtt " + republishRoleId + ".Arn"
               }
             });
-            status.template.Resources[republishRoleId] = {
+            status.template.resources.Resources[republishRoleId] = {
               Type: "AWS::IAM::Role",
               Properties: {
                 AssumeRolePolicyDocument: {
