@@ -7,27 +7,48 @@ var runtimes = {
     startingCode:
     `'use strict';
 
-console.log('Loading function');
+module.exports.hello = (event, context, callback) => {
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'Go Serverless v1.0! Your function executed successfully!',
+      input: event,
+    }),
+  };
 
-exports.handler = (event, context, callback) => {
-    console.log('Received event:', JSON.stringify(event, null, 2));
-    callback(null, "Hello World");
-    //callback('Something went wrong');
+  callback(null, response);
+
+  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
+  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
 };
 `
   },
   "python3.6": {
     fileExtension: "py",
-    handler: "lambda_handler",
+    handler: "handler",
     startingCode:
     `import json
 
-print('Loading function')
+def hello(event, context):
+    body = {
+        "message": "Go Serverless v1.0! Your function executed successfully!",
+        "input": event
+    }
 
-def lambda_handler(event, context):
-    print("Received event: " + json.dumps(event, indent=2))
-    return "Hello World"
-    #raise Exception('Something went wrong')
+    response = {
+        "statusCode": 200,
+        "body": json.dumps(body)
+    }
+
+    return response
+
+    # Use this code if you don't use the http event with the LAMBDA-PROXY integration
+    """
+    return {
+        "message": "Go Serverless v1.0! Your function executed successfully!",
+        "event": event
+    }
+    """
 `
   }
 }
