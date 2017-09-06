@@ -750,7 +750,7 @@ function render(model, runtime) {
   // Line breaks can introduce YAML syntax (e.g. >-) that will put some variables
   // (e.g. AWS::Region) between quotes.
   // Single quotes must be removed for functions (e.g. !Ref) to work.
-  files['template.yaml'] = jsyaml.safeDump(template, { lineWidth: 1024 }).replace(/'(!.+)'/g, "$1");
+  files['serverless.yml'] = jsyaml.safeDump(template, { lineWidth: 1024 }).replace(/'(!.+)'/g, "$1");
   
   return files;
 }
