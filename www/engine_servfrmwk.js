@@ -3,6 +3,13 @@
 var runtimes = {
   "nodejs6.10": {
     fileExtension: "js",
+    gitignore: `# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+`,
     handler: "handler",
     startingCode:
     `'use strict';
@@ -25,6 +32,27 @@ module.exports.hello = (event, context, callback) => {
   },
   "python3.6": {
     fileExtension: "py",
+    gitignore: `# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Serverless directories
+.serverless
+`,
     handler: "handler",
     startingCode:
     `import json
@@ -479,6 +507,9 @@ var renderingRules = {
       };
       if (node.description !== '') {
         status.template.Resources[node.id].Properties.Description = node.description;
+      }
+      if (!status.files[".gitignore"]) {
+        status.files[".gitignore"] = runtimes[status.runtime].gitignore;
       }
       status.files[node.id + '.' + runtimes[status.runtime].fileExtension] =
         runtimes[status.runtime].startingCode;
