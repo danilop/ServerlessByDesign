@@ -878,4 +878,4 @@ function render(model, runtime) {
   return files;
 }
 
-engines['servfrmwk'] = render;
+module.exports = render;

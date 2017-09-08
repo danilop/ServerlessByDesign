@@ -698,4 +698,4 @@ function render(model, runtime) {
   return files;
 }
 
-engines['sam'] = render;
+module.exports = render;
