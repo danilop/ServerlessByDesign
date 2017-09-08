@@ -164,16 +164,8 @@ var renderingRules = {
       if (status.model.nodes[id].type === 'fn') {
         status.template.functions[id].events.push({
           stream: {
-            "Fn::Join": [
-              "", 
-              [ 
-                "arn:aws:dynamodb:", 
-                { Ref: "AWS::Region" },
-                ":",
-                { Ref: "AWS::AccountId" },
-                `:table/${idFrom}/stream/1970-01-01T00:00:00.000`
-              ]
-            ]
+            type: "dynamodb",
+            arn: { "Fn::GetAtt": [idFrom, "StreamArn"] }
           }
         });
       } else { 
@@ -249,16 +241,8 @@ var renderingRules = {
       if (status.model.nodes[id].type === 'fn') {
         status.template.functions[id].events.push({
           stream: {
-            "Fn::Join": [
-              "", 
-              [ 
-                "arn:aws:kinesis:", 
-                { Ref: "AWS::Region" },
-                ":",
-                { Ref: "AWS::AccountId" },
-                `:stream${idFrom}`
-              ]
-            ]
+            type: "kinesis",
+            arn: { "Fn::GetAtt": [idFrom, "Arn"] }
           }
         });
       } else {
@@ -322,7 +306,7 @@ var renderingRules = {
             Processors: [{
               Parameters: [{
                 ParameterName: "LambdaArn",
-                ParameterValue: { Ref: targetFnId }, // ARN ???
+                ParameterValue: { Ref: `${targetFnId}LambdaFunction` },
               }],
               Type: "Lambda"
             }]
@@ -340,7 +324,7 @@ var renderingRules = {
               Action: 'sts:AssumeRole',
               Condition: {
                 StringEquals: {
-                  'sts:ExternalId': "{ Ref: AWS::AccountId }"
+                  'sts:ExternalId': { Ref: "AWS::AccountId" }
                 }
               }
             }]
@@ -733,7 +717,7 @@ var renderingRules = {
               Action: 'sts:AssumeRoleWithWebIdentity',
               Condition: {
                 StringEquals: {
-                  "cognito-identity.amazonaws.com:aud": { "Fn::Ref": node.id }
+                  "cognito-identity.amazonaws.com:aud": { Ref: node.id }
                 },
                 "ForAnyValue:StringLike": {
                   "cognito-identity.amazonaws.com:amr": "unauthenticated"
@@ -790,7 +774,7 @@ var renderingRules = {
           case 'fn':
             status.template.resources.Resources[node.id].Properties.TopicRulePayload.Actions.push({
               Lambda: {
-                FunctionArn: { "Fn::GetAtt": [idTo, "Arn"] }
+                FunctionArn: `${idTo}LambdaFunction`
               }
             });
             break;
@@ -888,7 +872,7 @@ function render(model, runtime) {
 
   // Line breaks can introduce YAML syntax (e.g. >-) that will put some variables
   // (e.g. AWS::Region) between quotes.
-  // Single quotes must be removed for functions (e.g. Fn::Ref) to work.
+  // Single quotes must be removed for functions (e.g. Fn::GetAtt) to work.
   files['serverless.yml'] = jsyaml.safeDump(template, { lineWidth: 1024 }).replace(/'(!.+)'/g, "$1");
   
   return files;
