@@ -100,7 +100,7 @@ var renderingRules = {
         status.template.resources.Resources[id].Properties.Events['Bucket' + idFrom] = {
           Type: "S3",
           Properties: {
-            Bucket: "!Ref " + idFrom,
+            Bucket: { Ref: idFrom },
             Events: "s3:ObjectCreated:*"
           }
         };
@@ -113,7 +113,7 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: ["s3:GetObject", "s3:PutObject"],
-        Resource: "!Sub ${" + idTo + ".Arn}/*"
+        Resource: { "Fn::Sub": "${" + idTo + ".Arn}/*" }
       };
     },
   },
@@ -155,13 +155,13 @@ var renderingRules = {
     event: function (status, id, idFrom) {
       if (status.model.nodes[id].type === 'fn') {
         status.template.functions[id].events.push({
-          stream: `arn:aws:dynamodb:REGION:XXXXXX:table/${idFrom}/stream/1970-01-01T00:00:00.000`
+          stream: `arn:aws:dynamodb:REGION:ACCOUNTID:table/${idFrom}/stream/1970-01-01T00:00:00.000`
         });
       } else { 
         status.template.resources.Resources[id].Properties.Events['Table' + idFrom] = {
           Type: "DynamoDB",
           Properties: {
-            Stream: "!GetAtt " + idFrom + ".StreamArn",
+            Stream: { "Fn::GetAtt": [idFrom, "StreamArn"] },
             StartingPosition: "TRIM_HORIZON",
             BatchSize: 10
           }
@@ -172,7 +172,7 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: ["dynamodb:GetItem", "dynamodb:PutItem"],
-        Resource: "!GetAtt " + idTo + ".Arn"
+        Resource: { "Fn::GetAtt": [idTo, "Arn"] }
       };
     },
   },
@@ -202,7 +202,7 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: "execute-api:Invoke",
-        Resource: "!Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*/*"
+        Resource: { "Fn::Sub": "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*/*" }
       };
     },
   },
@@ -218,13 +218,13 @@ var renderingRules = {
     event: function (status, id, idFrom) {
       if (status.model.nodes[id].type === 'fn') {
         status.template.functions[id].events.push({
-          stream: `arn:aws:kinesis:REGION:XXXXXX:stream/${idFrom}`
+          stream: `arn:aws:kinesis:REGION:ACCOUNTID:stream/${idFrom}`
         });
       } else {
         status.template.resources.Resources[id].Properties.Events['Stream' + idFrom] = {
           Type: "Kinesis",
           Properties: {
-            Stream: "!GetAtt " + idFrom + ".Arn",
+            Stream: { "Fn::GetAtt": [idFrom, "Arn"] },
             StartingPosition: "TRIM_HORIZON",
             BatchSize: 10
           }
@@ -235,7 +235,7 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: ["kinesis:PutRecord", "kinesis:PutRecords"],
-        Resource: "!GetAtt " + idTo + ".Arn"
+        Resource: { "Fn::GetAtt": [idTo, "Arn"] }
       };
     },
   },
@@ -263,14 +263,14 @@ var renderingRules = {
         Type: 'AWS::KinesisFirehose::DeliveryStream',
         Properties: {
           ExtendedS3DestinationConfiguration: {
-            BucketARN: "!GetAtt " + targetBucketId + ".Arn",
+            BucketARN: { "Fn::GetAtt": [targetBucketId, "Arn"] },
             BufferingHints: {
               IntervalInSeconds: 60,
               SizeInMBs: 50
             },
             CompressionFormat: "UNCOMPRESSED",
             Prefix: "firehose/",
-            RoleARN: "!GetAtt " + deliveryRoleId + ".Arn"
+            RoleARN: { "Fn::GetAtt": [deliveryRoleId, "Arn"] }
           }
         }
       };
@@ -281,7 +281,7 @@ var renderingRules = {
             Processors: [{
               Parameters: [{
                 ParameterName: "LambdaArn",
-                ParameterValue: "!Ref " + targetFnId, // ARN ???
+                ParameterValue: { Ref: targetFnId }, // ARN ???
               }],
               Type: "Lambda"
             }]
@@ -299,7 +299,7 @@ var renderingRules = {
               Action: 'sts:AssumeRole',
               Condition: {
                 StringEquals: {
-                  'sts:ExternalId': "!Ref AWS::AccountId"
+                  'sts:ExternalId': "{ Ref: AWS::AccountId }"
                 }
               }
             }]
@@ -323,12 +323,12 @@ var renderingRules = {
                 's3:ListBucketMultipartUploads',
                 's3:PutObject'
               ],
-              Resource: [
-                "!GetAtt " + targetBucketId + ".Arn"
-              ]
+              Resource: {
+                "Fn::GetAtt": [targetBucketId, "Arn"]
+              }
             }]
           },
-          Roles: ["!Ref " + deliveryRoleId]
+          Roles: [{ Ref: deliveryRoleId }]
         }
       };
     },
@@ -342,7 +342,7 @@ var renderingRules = {
         ],
         // Kinesis Firehose ARN syntax (can't use GetAtt)
         // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
-        Resource: "!Sub arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + idTo + "}",
+        Resource: { "Fn::Sub": "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + idTo + "}" }
       };
     },
   },
@@ -409,8 +409,8 @@ var renderingRules = {
       if (inputStreamId !== null) {
         status.template.resources.Resources[node.id]
           .Properties.Inputs[0].KinesisStreamsInput = {
-            ResourceARN: "!GetAtt " + inputStreamId + ".Arn",
-            RoleARN: "!GetAtt " + analyticsStreamRoleId + ".Arn"
+            ResourceARN: { "Fn::GetAtt": [inputStreamId, "Arn"] },
+            RoleARN: { "Fn::GetAtt": [analyticsStreamRoleId, "Arn"] }
           };
       }
 
@@ -419,8 +419,8 @@ var renderingRules = {
           .Properties.Inputs[0].KinesisFirehoseInput = {
             // Kinesis Firehose ARN syntax (can't use GetAtt)
             // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
-            ResourceARN: "!Sub arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + inputDeliveryStreamId + "}",
-            RoleARN: "!GetAtt " + analyticsStreamRoleId + ".Arn"
+            ResourceARN: { "Fn::Sub": "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + inputDeliveryStreamId + "}" },
+            RoleARN: { "Fn::GetAtt": [analyticsStreamRoleId, "Arn"] }
           };
       }
 
@@ -456,7 +456,7 @@ var renderingRules = {
         Type: "AWS::KinesisAnalytics::ApplicationOutput",
         DependsOn: node.id,
         Properties: {
-          ApplicationName: "!Ref " + node.id,
+          ApplicationName: { Ref: node.id },
           Output: {
             Name: "exampleOutput",
             DestinationSchema: {
@@ -469,8 +469,8 @@ var renderingRules = {
       if (outputStreamId !== null) {
         status.template.resources.Resources[analyticsStreamOutputId]
           .Properties.Output.KinesisStreamsOutput = {
-            ResourceARN: "!GetAtt " + outputStreamId + ".Arn",
-            RoleARN: "!GetAtt " + analyticsStreamRoleId + ".Arn"
+            ResourceARN: { "Fn::GetAtt": [outputStreamId, "Arn"] },
+            RoleARN: { "Fn::GetAtt": [analyticsStreamRoleId, "Arn"] }
           };
       }
 
@@ -479,8 +479,8 @@ var renderingRules = {
           .Properties.Output.KinesisFirehoseOutput = {
             // Kinesis Firehose ARN syntax (can't use GetAtt)
             // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
-            ResourceARN: "!Sub arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + outputDeliveryStreamId + "}",
-            RoleARN: "!GetAtt " + analyticsStreamRoleId + ".Arn"
+            ResourceARN: { "Fn::Sub": "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + outputDeliveryStreamId + "}" },
+            RoleARN: { "Fn::GetAtt": [analyticsStreamRoleId, "Arn"] }
           };
       }
 
@@ -523,7 +523,7 @@ var renderingRules = {
         status.template.resources.Resources[id].Properties.Events['Topic' + idFrom] = {
           Type: "SNS",
           Properties: {
-            Topic: "!Ref " + idFrom
+            Topic: { Ref: idFrom }
           }
         };
       }
@@ -532,7 +532,7 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: "sns:Publish",
-        Resource: "!Ref " + idTo // For an SNS topic, it returns the ARN
+        Resource: { Ref: idTo } // For an SNS topic, it returns the ARN
       };
     },
   },
@@ -581,7 +581,7 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: ["lambda:Invoke", "lambda:InvokeAsync"],
-        Resource: "!GetAtt " + idTo + ".Arn"
+        Resource: { "Fn::GetAtt": [idTo, "Arn"] }
       };
     }
   },
@@ -623,7 +623,7 @@ var renderingRules = {
           "states:StopExecution"
         ],
         "Resource": [
-          "!Ref " + idTo
+          { Ref: idTo }
         ]
       }
     }
@@ -649,7 +649,7 @@ var renderingRules = {
               Action: 'sts:AssumeRoleWithWebIdentity',
               Condition: {
                 StringEquals: {
-                  "cognito-identity.amazonaws.com:aud": "Ref! " + node.id
+                  "cognito-identity.amazonaws.com:aud": { "Fn::Ref": node.id }
                 },
                 "ForAnyValue:StringLike": {
                   "cognito-identity.amazonaws.com:amr": "unauthenticated"
@@ -668,7 +668,7 @@ var renderingRules = {
             Version: '2012-10-17',
             Statement: []
           },
-          Roles: ["!Ref " + cognitoUnauthRoleId]
+          Roles: [ { Ref: cognitoUnauthRoleId } ]
         }
       };
       // Output resources
@@ -706,7 +706,7 @@ var renderingRules = {
           case 'fn':
             status.template.resources.Resources[node.id].Properties.TopicRulePayload.Actions.push({
               Lambda: {
-                FunctionArn: "!GetAtt " + idTo + ".Arn"
+                FunctionArn: { "Fn::GetAtt": [idTo, "Arn"] }
               }
             });
             break;
@@ -715,7 +715,7 @@ var renderingRules = {
             status.template.resources.Resources[node.id].Properties.TopicRulePayload.Actions.push({
               Republish: {
                 Topic: "Output/Topic",
-                RoleArn: "!GetAtt " + republishRoleId + ".Arn"
+                RoleArn: { "Fn::GetAtt": [republishRoleId, "Arn"] }
               }
             });
             status.template.resources.Resources[republishRoleId] = {
@@ -738,7 +738,7 @@ var renderingRules = {
                     Statement: [{
                       Effect: "Allow",
                       Action: "iot:Publish",
-                      Resource: "!Sub arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/Output/*"
+                      Resource: { "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/Output/*" }
                     }]
                   }
               }]
@@ -793,7 +793,7 @@ function render(model, runtime) {
 
   // Line breaks can introduce YAML syntax (e.g. >-) that will put some variables
   // (e.g. AWS::Region) between quotes.
-  // Single quotes must be removed for functions (e.g. !Ref) to work.
+  // Single quotes must be removed for functions (e.g. Fn::Ref) to work.
   files['serverless.yml'] = jsyaml.safeDump(template, { lineWidth: 1024 }).replace(/'(!.+)'/g, "$1");
   
   return files;
