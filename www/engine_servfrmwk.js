@@ -113,7 +113,15 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: ["s3:GetObject", "s3:PutObject"],
-        Resource: { "Fn::Sub": "${" + idTo + ".Arn}/*" }
+        Resource: {
+          "Fn::Join": [
+            "",
+            [
+              { "Fn::GetAtt": [idTo, "Arn"] },
+              "/*"
+            ]
+          ]
+        }
       };
     },
   },
@@ -155,7 +163,18 @@ var renderingRules = {
     event: function (status, id, idFrom) {
       if (status.model.nodes[id].type === 'fn') {
         status.template.functions[id].events.push({
-          stream: `arn:aws:dynamodb:REGION:ACCOUNTID:table/${idFrom}/stream/1970-01-01T00:00:00.000`
+          stream: {
+            "Fn::Join": [
+              "", 
+              [ 
+                "arn:aws:dynamodb:", 
+                { Ref: "AWS::Region" },
+                ":",
+                { Ref: "AWS::AccountId" },
+                `:table/${idFrom}/stream/1970-01-01T00:00:00.000`
+              ]
+            ]
+          }
         });
       } else { 
         status.template.resources.Resources[id].Properties.Events['Table' + idFrom] = {
@@ -202,7 +221,18 @@ var renderingRules = {
       return {
         Effect: "Allow",
         Action: "execute-api:Invoke",
-        Resource: { "Fn::Sub": "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*/*" }
+        Resource: {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:",
+              { Ref: "AWS::Region" },
+              ":",
+              { Ref: "AWS::AccountId" },
+              ":*/*/*/*"
+            ]
+          ]
+        }
       };
     },
   },
@@ -218,7 +248,18 @@ var renderingRules = {
     event: function (status, id, idFrom) {
       if (status.model.nodes[id].type === 'fn') {
         status.template.functions[id].events.push({
-          stream: `arn:aws:kinesis:REGION:ACCOUNTID:stream/${idFrom}`
+          stream: {
+            "Fn::Join": [
+              "", 
+              [ 
+                "arn:aws:kinesis:", 
+                { Ref: "AWS::Region" },
+                ":",
+                { Ref: "AWS::AccountId" },
+                `:stream${idFrom}`
+              ]
+            ]
+          }
         });
       } else {
         status.template.resources.Resources[id].Properties.Events['Stream' + idFrom] = {
@@ -342,7 +383,18 @@ var renderingRules = {
         ],
         // Kinesis Firehose ARN syntax (can't use GetAtt)
         // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
-        Resource: { "Fn::Sub": "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + idTo + "}" }
+        Resource: {
+          "Fn::Join": [
+            "", 
+            [ 
+              "arn:aws:firehose:", 
+              { Ref: "AWS::Region" },
+              ":",
+              { Ref: "AWS::AccountId" },
+              `:deliverystream/${idTo}`
+            ]
+          ]
+        }
       };
     },
   },
@@ -419,7 +471,18 @@ var renderingRules = {
           .Properties.Inputs[0].KinesisFirehoseInput = {
             // Kinesis Firehose ARN syntax (can't use GetAtt)
             // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
-            ResourceARN: { "Fn::Sub": "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + inputDeliveryStreamId + "}" },
+            ResourceARN: {
+              "Fn::Join": [
+                "", 
+                [ 
+                  "arn:aws:firehose:", 
+                  { Ref: "AWS::Region" },
+                  ":",
+                  { Ref: "AWS::AccountId" },
+                  `:deliverystream/${inputDeliveryStreamId}`
+                ]
+              ]
+            },
             RoleARN: { "Fn::GetAtt": [analyticsStreamRoleId, "Arn"] }
           };
       }
@@ -479,7 +542,18 @@ var renderingRules = {
           .Properties.Output.KinesisFirehoseOutput = {
             // Kinesis Firehose ARN syntax (can't use GetAtt)
             // arn:aws:firehose:region:account-id:deliverystream/delivery-stream-name
-            ResourceARN: { "Fn::Sub": "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/${" + outputDeliveryStreamId + "}" },
+            ResourceARN: {
+              "Fn::Join": [
+                "", 
+                [ 
+                  "arn:aws:firehose:", 
+                  { Ref: "AWS::Region" },
+                  ":",
+                  { Ref: "AWS::AccountId" },
+                  `:deliverystream/${outputDeliveryStreamId}`
+                ]
+              ]
+            },
             RoleARN: { "Fn::GetAtt": [analyticsStreamRoleId, "Arn"] }
           };
       }
@@ -593,7 +667,17 @@ var renderingRules = {
           // The DefinitionString is added later
           // This role is automatically created by the AWS console
           // the first time you create a state machine in a region
-          RoleArn: "arn:aws:iam::${AWS::AccountId}:role/service-role/StatesExecutionRole-${AWS::Region}"
+          RoleArn: {
+            "Fn::Join": [
+              "", 
+              [ 
+                "arn:aws:iam::", 
+                { Ref: "AWS::AccountId" },
+                ":role/service-role/StatesExecutionRole-",
+                { Ref: "AWS::Region" }
+              ]
+            ]
+          },
         },
       };
       var definitionString = {
@@ -738,7 +822,18 @@ var renderingRules = {
                     Statement: [{
                       Effect: "Allow",
                       Action: "iot:Publish",
-                      Resource: { "Fn::Sub": "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/Output/*" }
+                      Resource: {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:aws:iot:",
+                            { Ref: "AWS::Region" },
+                            ":",
+                            { Ref: "AWS::AccountId" },
+                            ":topic/Outpu/*"
+                          ]
+                        ]
+                      }
                     }]
                   }
               }]
