@@ -1,5 +1,14 @@
 "use strict";
 
+var sam = require('./engines/sam');
+var servfrmwk = require('./engines/servfrmwk');
+
+// Engines to build the application in different formats (AWS SAM, ...)
+var engines = {
+    sam: sam,
+    servfrmwk: servfrmwk
+};
+
 var nodeTypes = {
   api: {
     name: 'API Gateway',
@@ -486,9 +495,6 @@ for (var type in nodeTypes) {
 var networkContainer = document.getElementById('networkContainer');
 
 var network = new vis.Network(networkContainer, networkData, networkOptions);
-
-// Engines to build the application in different formats (AWS SAM, ...)
-var engines = {};
 
 // To manage callbacks from modal dialogs
 var modalCallback = {};
