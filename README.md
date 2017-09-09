@@ -40,6 +40,9 @@ Here are a few examples to help you start:
 - [Some IoT](https://sbd.danilop.net/?import=examples/iot.json)
 - [All Together Now](https://sbd.danilop.net/?import=examples/full-app.json)
 
+### How to Add a New Icon
+See the [How To Add a New Icon](./HowToAddNewIcon.md) documentation.
+
 
 ## Dependencies
 
