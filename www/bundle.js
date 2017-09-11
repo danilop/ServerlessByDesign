@@ -1585,6 +1585,7 @@ module.exports = render;
 },{}],3:[function(require,module,exports){
 "use strict";
 
+<<<<<<< HEAD
 var runtimes = {
   "nodejs6.10": {
     fileExtension: "js",
@@ -2470,12 +2471,20 @@ module.exports = render;
 var sam = require('./engines/sam');
 var servfrmwk = require('./engines/servfrmwk');
 var terraform = require('./engines/terraform');
+=======
+var sam = require('./engines/sam');
+var servfrmwk = require('./engines/servfrmwk');
+>>>>>>> 0f7122083ee42054459292769d95c0ebb98efe2f
 
 // Engines to build the application in different formats (AWS SAM, ...)
 var engines = {
     sam: sam,
+<<<<<<< HEAD
     servfrmwk: servfrmwk,
     terraform: terraform
+=======
+    servfrmwk: servfrmwk
+>>>>>>> 0f7122083ee42054459292769d95c0ebb98efe2f
 };
 
 var nodeTypes = {
@@ -2980,4 +2989,4 @@ function init() {
 }
 
 window.onload = function () { init() }
-},{"./engines/sam":1,"./engines/servfrmwk":2,"./engines/terraform":3}]},{},[4]);
+},{"./engines/sam":1,"./engines/servfrmwk":2}]},{},[3]);
