@@ -556,7 +556,7 @@ var renderingRules = {
               Action: 'sts:AssumeRoleWithWebIdentity',
               Condition: {
                 StringEquals: {
-                  "cognito-identity.amazonaws.com:aud": "Ref! " + node.id
+                  "cognito-identity.amazonaws.com:aud": "!Ref " + node.id
                 },
                 "ForAnyValue:StringLike": {
                   "cognito-identity.amazonaws.com:amr": "unauthenticated"
