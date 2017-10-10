@@ -28,6 +28,10 @@ Just clone the repo and open `www/index.html` with your favourite browser.
 
 It can work locally, without an internet connection.
 
+### Modifying
+
+Want to make some changes? Just be sure to re-run `browserify index.js > bundle.js` and refresh!
+
 
 ## Usage
 
