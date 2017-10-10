@@ -11,109 +11,114 @@ var engines = {
 
 var nodeTypes = {
   api: {
-    name: 'API Gateway',
-    image: './img/aws/ApplicationServices_AmazonAPIGateway.png'
+    name: "API Gateway",
+    image: "./img/aws/ApplicationServices_AmazonAPIGateway.png"
   },
   cognitoIdentity: {
-    name: 'Cognito Identity',
-    image: './img/aws/MobileServices_AmazonCognito.png'
+    name: "Cognito Identity",
+    image: "./img/aws/MobileServices_AmazonCognito.png"
   },
   table: {
-    name: 'DynamoDB Table',
-    image: './img/aws/Database_AmazonDynamoDB_table.png'
+    name: "DynamoDB Table",
+    image: "./img/aws/Database_AmazonDynamoDB_table.png"
   },
   analyticsStream: {
-    name: 'Kinesis Analytics',
-    image: './img/aws/Analytics_AmazonKinesis_AmazonKinesisAnalytics.png'
+    name: "Kinesis Analytics",
+    image: "./img/aws/Analytics_AmazonKinesis_AmazonKinesisAnalytics.png"
   },
   deliveryStream: {
-    name: 'Kinesis Firehose',
-    image: './img/aws/Analytics_AmazonKinesis_AmazonKinesisFirehose.png'
+    name: "Kinesis Firehose",
+    image: "./img/aws/Analytics_AmazonKinesis_AmazonKinesisFirehose.png"
   },
   stream: {
-    name: 'Kinesis Stream',
-    image: './img/aws/Analytics_AmazonKinesis_AmazonKinesisStreams.png'
+    name: "Kinesis Stream",
+    image: "./img/aws/Analytics_AmazonKinesis_AmazonKinesisStreams.png"
   },
   iotRule: {
-    name: 'IoT Topic Rule',
-    image: './img/aws/InternetOfThings_AWSIoT_rule.png'
+    name: "IoT Topic Rule",
+    image: "./img/aws/InternetOfThings_AWSIoT_rule.png"
   },
   fn: {
-    name: 'Lambda Function',
-    image: './img/aws/Compute_AWSLambda_LambdaFunction.png'
+    name: "Lambda Function",
+    image: "./img/aws/Compute_AWSLambda_LambdaFunction.png"
   },
   bucket: {
-    name: 'S3 Bucket',
-    image: './img/aws/Storage_AmazonS3_bucket.png'
+    name: "S3 Bucket",
+    image: "./img/aws/Storage_AmazonS3_bucket.png"
   },
   schedule: {
-    name: 'Schedule',
-    image: './img/aws/ManagementTools_AmazonCloudWatch_eventtimebased.png'
+    name: "Schedule",
+    image: "./img/aws/ManagementTools_AmazonCloudWatch_eventtimebased.png"
   },
   topic: {
-    name: 'SNS Topic',
-    image: './img/aws/Messaging_AmazonSNS_topic.png'
+    name: "SNS Topic",
+    image: "./img/aws/Messaging_AmazonSNS_topic.png"
   },
   stepFn: {
-    name: 'Step Function',
-    image: './img/aws/ApplicationServices_AWSStepFunctions.png'
+    name: "Step Function",
+    image: "./img/aws/ApplicationServices_AWSStepFunctions.png"
   },
+  rds: {
+    name: "RDS",
+    image: "./img/aws/Database_AmazonRDS.png"
+  }
 };
 
 var nodeConnections = {
   bucket: {
-    topic: { action: 'notification' },
-    fn: { action: 'trigger' }
+    topic: { action: "notification" },
+    fn: { action: "trigger" }
   },
   table: {
-    fn: { action: 'stream' }
+    fn: { action: "stream" }
   },
   api: {
-    fn: { action: 'integration' },
-    stepFn: { action: 'integration' }
+    fn: { action: "integration" },
+    stepFn: { action: "integration" }
   },
   stream: {
-    fn: { action: 'trigger' },
-    analyticsStream: { action: 'input' },
-    deliveryStream: { action: 'deliver' }
+    fn: { action: "trigger" },
+    analyticsStream: { action: "input" },
+    deliveryStream: { action: "deliver" }
   },
   deliveryStream: {
-    bucket: { action: 'destination' },
-    fn: { action: 'transform' } // To transform data in the stream
+    bucket: { action: "destination" },
+    fn: { action: "transform" } // To transform data in the stream
   },
   analyticsStream: {
-    stream: { action: 'output' },
-    deliveryStream: { action: 'output' }
+    stream: { action: "output" },
+    deliveryStream: { action: "output" }
   },
   schedule: {
-    deliveryStream: { action: 'target' },
-    stream: { action: 'target' },
-    topic: { action: 'target' },
-    fn: { action: 'target' }
+    deliveryStream: { action: "target" },
+    stream: { action: "target" },
+    topic: { action: "target" },
+    fn: { action: "target" }
   },
   topic: {
-    fn: { action: 'trigger' }
+    fn: { action: "trigger" }
   },
   fn: {
-    bucket: { action: 'read/write' },
-    table: { action: 'read/write' },
-    api: { action: 'invoke' },
-    stream: { action: 'put' },
-    deliveryStream: { action: 'put' },
-    topic: { action: 'notification' },
-    fn: { action: 'invoke' },
-    stepFn: { action: 'activity' }
+    bucket: { action: "read/write" },
+    table: { action: "read/write" },
+    api: { action: "invoke" },
+    stream: { action: "put" },
+    deliveryStream: { action: "put" },
+    topic: { action: "notification" },
+    fn: { action: "invoke" },
+    stepFn: { action: "activity" },
+    rds: { action: "read/write" }
   },
   stepFn: {
-    fn: { action: 'invoke' },
+    fn: { action: "invoke" }
   },
-  cognitoIdentity:  {
-    fn: { action: 'authorize' },
-    api: { action: 'authorize' }
+  cognitoIdentity: {
+    fn: { action: "authorize" },
+    api: { action: "authorize" }
   },
   iotRule: {
-    fn: { action: 'invoke' },
-    iotRule: { action: 'republish' }
+    fn: { action: "invoke" },
+    iotRule: { action: "republish" }
     // These connections require an external/service role
     // stream: { action: 'put' },
     // deliveryStream: { action: 'put' },
@@ -125,37 +130,40 @@ var nodeConnections = {
 function getUrlParams() {
   var p = {};
   var match,
-    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+    pl = /\+/g, // Regex for replacing addition symbol with a space
     search = /([^&=]+)=?([^&]*)/g,
-    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
-    query  = window.location.search.substring(1);
-  while (match = search.exec(query))
-    p[decode(match[1])] = decode(match[2]);
+    decode = function(s) {
+      return decodeURIComponent(s.replace(pl, " "));
+    },
+    query = window.location.search.substring(1);
+  while ((match = search.exec(query))) p[decode(match[1])] = decode(match[2]);
   return p;
 }
 
 function setSelectOptions(id, options) {
   var $el = $("#" + id);
   $el.empty(); // remove old options
-  $el.append($("<option/>", { 'disabled': "disabled", 'selected': "selected", 'value': "" })
-  .text("Please choose"));
-  $.each(options, function (key, value) {
-    $el.append($("<option/>", { 'value': key })
-      .text(value.name));
+  $el.append(
+    $("<option/>", {
+      disabled: "disabled",
+      selected: "selected",
+      value: ""
+    }).text("Please choose")
+  );
+  $.each(options, function(key, value) {
+    $el.append($("<option/>", { value: key }).text(value.name));
   });
 }
 
 function setRadioOptions(id, options) {
   var $el = $("#" + id);
   $el.empty(); // remove old options
-  $.each(options, function (key, value) {
+  $.each(options, function(key, value) {
     $el.append(
-      $("<div/>", { 'class': 'radio' }).append(
-        $("<input/>", { 'type': 'radio', 'name': id, 'value': key, 'id': key })
-      ).append(
-        $("<label/>", { 'class': 'radio', 'for': key }).text(value)
-        )
-    )
+      $("<div/>", { class: "radio" })
+        .append($("<input/>", { type: "radio", name: id, value: key, id: key }))
+        .append($("<label/>", { class: "radio", for: key }).text(value))
+    );
   });
 }
 
@@ -166,73 +174,75 @@ function networkHeight() {
   $("#networkContainer").width(w);
 }
 $(document).ready(networkHeight);
-$(window).resize(networkHeight).resize();
+$(window)
+  .resize(networkHeight)
+  .resize();
 
-$("#mainForm").submit(function (event) {
+$("#mainForm").submit(function(event) {
   event.preventDefault();
 });
 
-$("#nodeForm").submit(function (event) {
+$("#nodeForm").submit(function(event) {
   event.preventDefault();
   var id = $("#nodeId").val();
   var type = $("#nodeTypeSelect :selected").val();
   var description = $("#nodeDescription").val();
-  var label = $("#nodeTypeSelect :selected").text() + '\n' + id;
-  var nodeData = modalCallback['nodeModal'].data;
-  var callback = modalCallback['nodeModal'].callback;
+  var label = $("#nodeTypeSelect :selected").text() + "\n" + id;
+  var nodeData = modalCallback["nodeModal"].data;
+  var callback = modalCallback["nodeModal"].callback;
   if (type === undefined || type == "") {
     alert("Please choose a resource type.");
-  } else if (id === '') {
+  } else if (id === "") {
     alert("Please provide a unique ID for the node.");
-  } else if (!$("#nodeId").prop('disabled') && nodes.get(id) !== null) {
+  } else if (!$("#nodeId").prop("disabled") && nodes.get(id) !== null) {
     alert("Node ID already in use.");
   } else {
     nodeData.id = id;
     nodeData.label = label;
     console.log('description = "' + description + '"');
     console.log('before nodeData.title = "' + nodeData.title + '"');
-    if (description !== '') {
+    if (description !== "") {
       nodeData.title = description; // For the tooltip
-    } else if ('title' in nodeData) {
+    } else if ("title" in nodeData) {
       nodeData.title = undefined;
     }
     console.log('after nodeData.title = "' + nodeData.title + '"');
     nodeData.model = {
       type: type,
       description: description
-    }
+    };
     nodeData.group = type;
     nodeData.shadow = false; // quick fix for updates
     callback(nodeData);
-    modalCallback['nodeModal'] = null;
-    $("#nodeModal").modal('hide');
+    modalCallback["nodeModal"] = null;
+    $("#nodeModal").modal("hide");
   }
 });
 
-$("#nodeModal").on('hide.bs.modal', function () {
-  if (modalCallback['nodeModal'] !== null) {
-    var callback = modalCallback['nodeModal'].callback;
+$("#nodeModal").on("hide.bs.modal", function() {
+  if (modalCallback["nodeModal"] !== null) {
+    var callback = modalCallback["nodeModal"].callback;
     callback(null);
-    modalCallback['nodeModal'] = null;
+    modalCallback["nodeModal"] = null;
   }
 });
 
-$("#screenshotButton").click(function () {
+$("#screenshotButton").click(function() {
   var appName = $("#appName").val();
-  if (appName === '') {
-    alert('Please provide an Application Name.');
+  if (appName === "") {
+    alert("Please provide an Application Name.");
     return;
   }
   var canvas = $("#networkContainer canvas")[0];
-  canvas.toBlob(function(blob){
+  canvas.toBlob(function(blob) {
     saveAs(blob, appName + ".png");
   });
 });
 
-$("#exportButton").click(function () {
+$("#exportButton").click(function() {
   var appName = $("#appName").val();
-  if (appName === '') {
-    alert('Please provide an Application Name.');
+  if (appName === "") {
+    alert("Please provide an Application Name.");
     return;
   }
   var jsonData = exportNetwork();
@@ -240,22 +250,22 @@ $("#exportButton").click(function () {
   saveAs(blob, appName + ".json");
 });
 
-$("#importButton").click(function () {
-  $("#importData").val('');
+$("#importButton").click(function() {
+  $("#importData").val("");
   $("#importModal").modal();
 });
 
-$("#importForm").submit(function (event) {
+$("#importForm").submit(function(event) {
   event.preventDefault();
   var importData = $("#importData").val();
   importNetwork(JSON.parse(importData));
-  $("#importModal").modal('hide');
+  $("#importModal").modal("hide");
 });
 
-$("#buildButton").click(function () {
+$("#buildButton").click(function() {
   var appName = $("#appName").val();
-  if (appName === '') {
-    alert('Please provide an Application Name.');
+  if (appName === "") {
+    alert("Please provide an Application Name.");
     return;
   }
   var runtime = $("#runtime :selected").val();
@@ -265,22 +275,22 @@ $("#buildButton").click(function () {
     app: appName,
     nodes: {}
   };
-  nodes.forEach(function (n) {
-    console.log(n.id + ' (' + n.model.type + ')');
+  nodes.forEach(function(n) {
+    console.log(n.id + " (" + n.model.type + ")");
     model.nodes[n.id] = {
       id: n.id,
       type: n.model.type,
       description: n.model.description,
       to: [],
       from: []
-    }
-    network.getConnectedNodes(n.id, 'to').forEach(function (cid) {
-      console.log(n.id + ' to ' + cid);
-      model.nodes[n.id]['to'].push(cid);
+    };
+    network.getConnectedNodes(n.id, "to").forEach(function(cid) {
+      console.log(n.id + " to " + cid);
+      model.nodes[n.id]["to"].push(cid);
     });
-    network.getConnectedNodes(n.id, 'from').forEach(function (cid) {
-      console.log(n.id + ' from ' + cid);
-      model.nodes[n.id]['from'].push(cid);
+    network.getConnectedNodes(n.id, "from").forEach(function(cid) {
+      console.log(n.id + " from " + cid);
+      model.nodes[n.id]["from"].push(cid);
     });
   });
   console.log("Building...");
@@ -295,25 +305,23 @@ $("#buildButton").click(function () {
     zip.file(f, files[f]);
   }
 
-  zip.generateAsync({ type: "blob" })
-    .then(function (content) {
-      // see FileSaver.js
-      saveAs(content, model.app + ".zip");
-    });
-
+  zip.generateAsync({ type: "blob" }).then(function(content) {
+    // see FileSaver.js
+    saveAs(content, model.app + ".zip");
+  });
 });
 
 function exportNetwork() {
   var exportData = {
     nodes: [],
     edges: []
-  }
+  };
 
-  nodes.forEach(function (n) {
+  nodes.forEach(function(n) {
     exportData.nodes.push(n);
   });
 
-  edges.forEach(function (n) {
+  edges.forEach(function(n) {
     exportData.edges.push(n);
   });
 
@@ -323,7 +331,6 @@ function exportNetwork() {
 }
 
 function importNetwork(importData) {
-
   nodes = new vis.DataSet(importData.nodes);
   edges = new vis.DataSet(importData.edges);
 
@@ -340,41 +347,41 @@ function importNetwork(importData) {
 
 function getEdgeStyle(node, edgeData) {
   switch (node.model.type) {
-    case 'fn':
-      edgeData.color = 'Green';
+    case "fn":
+      edgeData.color = "Green";
       edgeData.dashes = true;
       break;
     default:
-      edgeData.color = 'Blue';
+      edgeData.color = "Blue";
   }
 }
 
 function networkAddNode(nodeData, callback) {
-  modalCallback['nodeModal'] = {
+  modalCallback["nodeModal"] = {
     data: nodeData,
     callback: callback
   };
   $("#nodeModalTitle").text("Add Node");
-  $("#nodeId").val('');
-  $("#nodeDescription").val('');
-  $("#nodeTypeSelect").val('');
-  $("#nodeTypeSelect").prop('disabled', false);
-  $("#nodeId").prop('disabled', false);
-  $("#nodeId").prop('disabled', false);
+  $("#nodeId").val("");
+  $("#nodeDescription").val("");
+  $("#nodeTypeSelect").val("");
+  $("#nodeTypeSelect").prop("disabled", false);
+  $("#nodeId").prop("disabled", false);
+  $("#nodeId").prop("disabled", false);
   $("#nodeModal").modal();
 }
 
 function networkEditNode(nodeData, callback) {
-  modalCallback['nodeModal'] = {
+  modalCallback["nodeModal"] = {
     data: nodeData,
     callback: callback
   };
   $("#nodeModalTitle").text("Edit Node");
   console.log(nodeData.model.type);
   $("#nodeTypeSelect").val(nodeData.model.type);
-  $("#nodeTypeSelect").prop('disabled', true);
+  $("#nodeTypeSelect").prop("disabled", true);
   $("#nodeId").val(nodeData.id);
-  $("#nodeId").prop('disabled', true);
+  $("#nodeId").prop("disabled", true);
   $("#nodeDescription").val(nodeData.model.description);
   $("#nodeModal").modal();
 }
@@ -384,20 +391,38 @@ function networkAddEdge(edgeData, callback) {
   var nodeFrom = nodes.get(edgeData.from);
   var nodeTo = nodes.get(edgeData.to);
   if (!(nodeTo.model.type in nodeConnections[nodeFrom.model.type])) {
-    var toTypeList = Object.keys(nodeConnections[nodeFrom.model.type])
-      .map(function (t) { return nodeTypes[t].name });
+    var toTypeList = Object.keys(
+      nodeConnections[nodeFrom.model.type]
+    ).map(function(t) {
+      return nodeTypes[t].name;
+    });
     var fromTypeList = Object.keys(nodeConnections)
-      .filter(function (t) { return nodeTo.model.type in nodeConnections[t] })
-      .map(function (t) { return nodeTypes[t].name });
-    var msg = "You can't connect " + nodeTypes[nodeFrom.model.type].name +
-      " to " + nodeTypes[nodeTo.model.type].name + ".\n" +
-      "You can connect " + nodeTypes[nodeFrom.model.type].name +
-      " to " + toTypeList.join(', ') + ".\n" +
-      "You can connect " + fromTypeList.join(', ')  +
-      " to " + nodeTypes[nodeTo.model.type].name + ".";
+      .filter(function(t) {
+        return nodeTo.model.type in nodeConnections[t];
+      })
+      .map(function(t) {
+        return nodeTypes[t].name;
+      });
+    var msg =
+      "You can't connect " +
+      nodeTypes[nodeFrom.model.type].name +
+      " to " +
+      nodeTypes[nodeTo.model.type].name +
+      ".\n" +
+      "You can connect " +
+      nodeTypes[nodeFrom.model.type].name +
+      " to " +
+      toTypeList.join(", ") +
+      ".\n" +
+      "You can connect " +
+      fromTypeList.join(", ") +
+      " to " +
+      nodeTypes[nodeTo.model.type].name +
+      ".";
     alert(msg);
   } else {
-    edgeData.label = nodeConnections[nodeFrom.model.type][nodeTo.model.type].action;
+    edgeData.label =
+      nodeConnections[nodeFrom.model.type][nodeTo.model.type].action;
     getEdgeStyle(nodeFrom, edgeData);
     if (edgeData.from === edgeData.to) {
       var r = confirm("Do you want to connect the node to itself?");
@@ -437,12 +462,12 @@ var networkOptions = {
     }
   },
   edges: {
-    arrows: 'to',
-    color: 'Red',
+    arrows: "to",
+    color: "Red",
     font: {
       size: 12,
-      align: 'middle',
-      strokeWidth: 2      
+      align: "middle",
+      strokeWidth: 2
     }
   },
   groups: {},
@@ -453,46 +478,46 @@ var networkOptions = {
     },
     forceAtlas2Based: {
       avoidOverlap: 0.1
-    },
+    }
   },
   configure: {
     enabled: true,
     container: $("#physicsContainer")[0],
-    filter: 'physics',
+    filter: "physics",
     showButton: false
   }
-}
+};
 
 // Filling the groups
 for (var type in nodeTypes) {
   //Object.keys(nodeTypes).forEach(function (type) {
   var color;
   switch (type) {
-    case 'fn':
-      color = 'Green';
+    case "fn":
+      color = "Green";
       break;
     default:
-      color = 'Blue';
+      color = "Blue";
   }
   networkOptions.groups[type] = {
-    shape: 'image',
+    shape: "image",
     image: nodeTypes[type].image,
     mass: 1.2,
     shapeProperties: {
       useBorderWithImage: true
     },
     color: {
-      border: 'White',
-      background: 'White',
+      border: "White",
+      background: "White",
       highlight: {
         border: color,
-        background: 'White'
+        background: "White"
       }
     }
   };
 }
 
-var networkContainer = document.getElementById('networkContainer');
+var networkContainer = document.getElementById("networkContainer");
 
 var network = new vis.Network(networkContainer, networkData, networkOptions);
 
@@ -500,14 +525,16 @@ var network = new vis.Network(networkContainer, networkData, networkOptions);
 var modalCallback = {};
 
 function init() {
-  setSelectOptions('nodeTypeSelect', nodeTypes);
+  setSelectOptions("nodeTypeSelect", nodeTypes);
   var urlParams = getUrlParams();
-  var importLink = urlParams['import'] || null;
+  var importLink = urlParams["import"] || null;
   if (importLink !== null) {
-    $.get(importLink, function(result){
+    $.get(importLink, function(result) {
       importNetwork(result);
     });
   }
 }
 
-window.onload = function () { init() }
+window.onload = function() {
+  init();
+};
