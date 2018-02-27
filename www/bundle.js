@@ -1916,6 +1916,12 @@ $("#buildButton").click(function () {
     .then(function (content) {
       // see FileSaver.js
       saveAs(content, model.app + ".zip");
+      alert(`You can now build this application using the AWS CLI:
+
+aws cloudformation package --s3-bucket <BUCKET> --s3-prefix <PATH> --template-file template.yaml --output-template-file output-template.json
+
+aws cloudformation deploy --template-file ./output-template.json --stack-name <STACK> --capabilities CAPABILITY_IAM
+      `);
     });
 
 });
