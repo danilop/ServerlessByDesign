@@ -834,7 +834,7 @@ var renderingRules = {
   }
 };
 
-function render(model, runtime) {
+function render(model, runtime, deployment) {
   console.log('Using Serverless Framework...');
   var files = {};
   var template = {

@@ -9,6 +9,19 @@ var engines = {
     servfrmwk: servfrmwk
 };
 
+var deploymentPreferenceTypes = {
+  '': 'None',
+  Canary10Percent5Minutes: 'Canary 10% for 5\'',
+  Canary10Percent10Minutes: 'Canary 10% for 10\'',
+  Canary10Percent15Minutes: 'Canary 10% for 15\'',
+  Canary10Percent30Minutes: 'Canary 10% for 30\'',
+  Linear10PercentEvery1Minute: 'Linear 10% every 1\'',
+  Linear10PercentEvery2Minutes: 'Linear 10% every 2\'',
+  Linear10PercentEvery3Minutes: 'Linear 10% every 3\'',
+  Linear10PercentEvery10Minutes: 'Linear 10% every 10\'',
+  AllAtOnce: 'All at Once'
+};
+
 var nodeTypes = {
   api: {
     name: 'API Gateway',
@@ -134,14 +147,20 @@ function getUrlParams() {
   return p;
 }
 
-function setSelectOptions(id, options) {
+function setSelectOptions(id, options, message) {
   var $el = $("#" + id);
   $el.empty(); // remove old options
   $el.append($("<option/>", { 'disabled': "disabled", 'selected': "selected", 'value': "" })
-  .text("Please choose"));
+  .text(message));
   $.each(options, function (key, value) {
+    var description;
+    if (value.hasOwnProperty('name')) {
+      description = value.name;
+    } else {
+      description = value;
+    }
     $el.append($("<option/>", { 'value': key })
-      .text(value.name));
+    .text(description));
   });
 }
 
@@ -259,6 +278,7 @@ $("#buildButton").click(function () {
     return;
   }
   var runtime = $("#runtime :selected").val();
+  var deployment = $("#deployment :selected").val();
   var engine = $("#engine :selected").val();
   console.log("Building " + appName + " -> " + runtime + " / " + engine);
   var model = {
@@ -285,7 +305,7 @@ $("#buildButton").click(function () {
   });
   console.log("Building...");
 
-  var files = engines[engine](model, runtime);
+  var files = engines[engine](model, runtime, deployment);
 
   var zip = new JSZip();
 
@@ -500,7 +520,8 @@ var network = new vis.Network(networkContainer, networkData, networkOptions);
 var modalCallback = {};
 
 function init() {
-  setSelectOptions('nodeTypeSelect', nodeTypes);
+  setSelectOptions('nodeTypeSelect', nodeTypes, "Please choose");
+  setSelectOptions('deployment', deploymentPreferenceTypes, "Deployment Preference");
   var urlParams = getUrlParams();
   var importLink = urlParams['import'] || null;
   if (importLink !== null) {

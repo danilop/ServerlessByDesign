@@ -662,13 +662,25 @@ var renderingRules = {
   }
 };
 
-function render(model, runtime) {
+function render(model, runtime, deployment) {
   console.log('Using SAM...');
   var files = {};
   var template = {
     AWSTemplateFormatVersion: "2010-09-09",
     Transform: "AWS::Serverless-2016-10-31"
   };
+
+  if (deployment) {
+    template.Globals = {
+      Function: {
+        AutoPublishAlias: "live",
+        DeploymentPreference: {
+          Type: deployment
+        }
+      }
+    }
+  }
+
   var status = {
     model: model,
     runtime: runtime,

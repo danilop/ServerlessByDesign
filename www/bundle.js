@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
 "use strict";
 
 var runtimes = {
@@ -663,13 +663,25 @@ var renderingRules = {
   }
 };
 
-function render(model, runtime) {
+function render(model, runtime, deployment) {
   console.log('Using SAM...');
   var files = {};
   var template = {
     AWSTemplateFormatVersion: "2010-09-09",
     Transform: "AWS::Serverless-2016-10-31"
   };
+
+  if (deployment) {
+    template.Globals = {
+      Function: {
+        AutoPublishAlias: "live",
+        DeploymentPreference: {
+          Type: deployment
+        }
+      }
+    }
+  }
+
   var status = {
     model: model,
     runtime: runtime,
@@ -1537,7 +1549,7 @@ var renderingRules = {
   }
 };
 
-function render(model, runtime) {
+function render(model, runtime, deployment) {
   console.log('Using Serverless Framework...');
   var files = {};
   var template = {
@@ -1592,6 +1604,19 @@ var servfrmwk = require('./engines/servfrmwk');
 var engines = {
     sam: sam,
     servfrmwk: servfrmwk
+};
+
+var deploymentPreferenceTypes = {
+  '': 'None',
+  Canary10Percent5Minutes: 'Canary 10% for 5\'',
+  Canary10Percent10Minutes: 'Canary 10% for 10\'',
+  Canary10Percent15Minutes: 'Canary 10% for 15\'',
+  Canary10Percent30Minutes: 'Canary 10% for 30\'',
+  Linear10PercentEvery1Minute: 'Linear 10% every 1\'',
+  Linear10PercentEvery2Minutes: 'Linear 10% every 2\'',
+  Linear10PercentEvery3Minutes: 'Linear 10% every 3\'',
+  Linear10PercentEvery10Minutes: 'Linear 10% every 10\'',
+  AllAtOnce: 'All at Once'
 };
 
 var nodeTypes = {
@@ -1719,14 +1744,20 @@ function getUrlParams() {
   return p;
 }
 
-function setSelectOptions(id, options) {
+function setSelectOptions(id, options, message) {
   var $el = $("#" + id);
   $el.empty(); // remove old options
   $el.append($("<option/>", { 'disabled': "disabled", 'selected': "selected", 'value': "" })
-  .text("Please choose"));
+  .text(message));
   $.each(options, function (key, value) {
+    var description;
+    if (value.hasOwnProperty('name')) {
+      description = value.name;
+    } else {
+      description = value;
+    }
     $el.append($("<option/>", { 'value': key })
-      .text(value.name));
+    .text(description));
   });
 }
 
@@ -1844,6 +1875,7 @@ $("#buildButton").click(function () {
     return;
   }
   var runtime = $("#runtime :selected").val();
+  var deployment = $("#deployment :selected").val();
   var engine = $("#engine :selected").val();
   console.log("Building " + appName + " -> " + runtime + " / " + engine);
   var model = {
@@ -1870,7 +1902,7 @@ $("#buildButton").click(function () {
   });
   console.log("Building...");
 
-  var files = engines[engine](model, runtime);
+  var files = engines[engine](model, runtime, deployment);
 
   var zip = new JSZip();
 
@@ -2085,7 +2117,8 @@ var network = new vis.Network(networkContainer, networkData, networkOptions);
 var modalCallback = {};
 
 function init() {
-  setSelectOptions('nodeTypeSelect', nodeTypes);
+  setSelectOptions('nodeTypeSelect', nodeTypes, "Please choose");
+  setSelectOptions('deployment', deploymentPreferenceTypes, "Deployment Preference");
   var urlParams = getUrlParams();
   var importLink = urlParams['import'] || null;
   if (importLink !== null) {
