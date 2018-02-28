@@ -6,6 +6,7 @@ This is a visual approach to serverless development:
 - _Edit_ an application adding nodes and edges following an _event-driven_ design
 - _Import_ a previously exported application to continue working on it
 - Choose a _runtime_, and _build_ your application (for example, using AWS SAM)
+- Optionally use _canary_ or _linear_ deployments for your future updates
 - Edit _templates_ and code files for the final configurations before deploying the application
 - _Export_ an application to save it for later use in a JSON file
 - Take a _picture_ of the application architecture to have a visual representation to share
