@@ -2,18 +2,36 @@
 "use strict";
 
 var runtimes = {
+  "nodejs8.10": {
+    fileExtension: "js",
+    handler: "handler",
+    startingCode:
+    `'use strict';
+
+console.log("Loading function");
+
+exports.handler = async function(event, context) {
+  console.log('Received event:', JSON.stringify(event, null, 2));
+  return "Hello World";
+  // or 
+  // throw new Error(“some error type”); 
+};
+  
+`
+  },
   "nodejs6.10": {
     fileExtension: "js",
     handler: "handler",
     startingCode:
     `'use strict';
 
-console.log('Loading function');
+console.log("Loading function");
 
 exports.handler = (event, context, callback) => {
     console.log('Received event:', JSON.stringify(event, null, 2));
     callback(null, "Hello World");
-    //callback('Something went wrong');
+    // or 
+    //callback("Something went wrong");
 };
 `
   },
@@ -23,12 +41,13 @@ exports.handler = (event, context, callback) => {
     startingCode:
     `import json
 
-print('Loading function')
+print("Loading function")
 
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event, indent=2))
     return "Hello World"
-    #raise Exception('Something went wrong')
+    #or
+    #raise Exception("Something went wrong")
 `
   }
 }
@@ -202,7 +221,7 @@ var renderingRules = {
             Processors: [{
               Parameters: [{
                 ParameterName: "LambdaArn",
-                ParameterValue: "!Ref " + targetFnId, // ARN ???
+                ParameterValue: "!GetAtt " + targetFnId + ".Arn"
               }],
               Type: "Lambda"
             }]
