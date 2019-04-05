@@ -25,13 +25,21 @@ This code is licensed under the The MIT License (MIT). Please see the LICENSE fi
 
 ## Installation
 
-Just clone the repo and open `www/index.html` with your favourite browser.
+You need `node` and `npm`. Just run
 
-It can work locally, without an internet connection.
+```
+npm run build
+```
 
-### Modifying
+to build it for production, then open `dist/index.html` with your favourite browser.
 
-Want to make some changes? Just be sure to re-run `browserify index.js > bundle.js` and refresh!
+For a development build, that you can debug with a browser, use:
+
+```
+npm run dev
+```
+
+This application works locally within the browser, without an internet connection.
 
 
 ## Usage
