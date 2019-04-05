@@ -62,8 +62,6 @@ This code depends on:
 - [Vis.js](http://visjs.org)
 - [js-yaml](http://nodeca.github.io/js-yaml/)
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js/)
-- [Blob.js](https://github.com/eligrey/Blob.js)
-- [canvas-toBlob.js](https://github.com/eligrey/canvas-toBlob.js)
 - [jszip](https://stuk.github.io/jszip/)
 - [font-awesome](http://fontawesome.io)
 - [JQuery](https://jquery.com)
