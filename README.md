@@ -1,5 +1,7 @@
 # Serverless By Design
 
+![Serverless by Design screenshot](https://danilop.s3.amazonaws.com/Images/serverless-by-design.png)
+
 This is a visual approach to serverless development:
 
 - An application is a network of _nodes_ (serverless resources, such as Lambda functions or S3 buckets) connected by _edges_ (their relationships, for example a trigger or a data flow)
