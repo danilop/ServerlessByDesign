@@ -14,7 +14,7 @@ Serverless By Design is a visual approach to serverless development:
 - Take a _picture_ of the application architecture to have a visual representation to share
 - Fine tune the _physics_ used to place nodes and edges on the screen, for example enable/disable it or choose another solver
 
-Serverless By Design runs in the browser and doesn't need an internet connection if installed locally.
+Serverless By Design runs in the browser and doesn't need an internet connection when installed locally.
 
 A live version is available at: http://sbd.danilop.net
 
@@ -29,7 +29,7 @@ This code is licensed under the The MIT License (MIT). Please see the LICENSE fi
 
 ## Installation
 
-You need `node` and `npm`. Just run
+You need `node` and `npm`. Just run:
 
 ```
 npm run build
