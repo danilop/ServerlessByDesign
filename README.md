@@ -2,7 +2,7 @@
 
 ![Serverless by Design screenshot](https://danilop.s3.amazonaws.com/Images/serverless-by-design.png)
 
-This is a visual approach to serverless development:
+Serverless By Design is a visual approach to serverless development:
 
 - An application is a network of _nodes_ (serverless resources, such as Lambda functions or S3 buckets) connected by _edges_ (their relationships, for example a trigger or a data flow)
 - _Edit_ an application adding nodes and edges following an _event-driven_ design
@@ -13,6 +13,8 @@ This is a visual approach to serverless development:
 - _Export_ an application to save it for later use in a JSON file
 - Take a _picture_ of the application architecture to have a visual representation to share
 - Fine tune the _physics_ used to place nodes and edges on the screen, for example enable/disable it or choose another solver
+
+Serverless By Design runs in the browser and doesn't need an internet connection if installed locally.
 
 A live version is available at: http://sbd.danilop.net
 
@@ -40,8 +42,6 @@ For a development build, that you can debug with a browser, use:
 ```
 npm run dev
 ```
-
-This application works locally within the browser, without an internet connection.
 
 
 ## Usage
