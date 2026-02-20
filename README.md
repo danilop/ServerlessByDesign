@@ -16,52 +16,100 @@ Serverless By Design is a visual approach to serverless development:
 
 Serverless By Design runs in the browser and doesn't need an internet connection when installed locally.
 
-A live version is available at: http://sbd.danilop.net
-
 Think. Build. Repeat.
+
+## Supported Resources
+
+| Resource | Key |
+|---|---|
+| API Gateway | `api` |
+| Cognito Identity Pool | `cognitoIdentity` |
+| DynamoDB Table | `table` |
+| EventBridge Bus | `eventBus` |
+| IoT Topic Rule | `iotRule` |
+| Kinesis Data Analytics | `analyticsStream` |
+| Kinesis Data Firehose | `deliveryStream` |
+| Kinesis Data Stream | `stream` |
+| Lambda Function | `fn` |
+| S3 Bucket | `bucket` |
+| Schedule (CloudWatch) | `schedule` |
+| SNS Topic | `topic` |
+| SQS Queue | `queue` |
+| Step Functions | `stepFn` |
+
+## Build Engines
+
+- **AWS SAM** — generates `template.yaml` with SAM intrinsic functions
+- **Serverless Framework** — generates `serverless.yml` with JSON-form CloudFormation syntax
+
+## Runtimes
+
+- Node.js 22.x / 20.x
+- Python 3.13 / 3.12
 
 ## License
 
-Copyright (c) 2017 Danilo Poccia, http://danilop.net
+Copyright (c) 2017-2026 Danilo Poccia, http://danilop.net
 
 This code is licensed under the The MIT License (MIT). Please see the LICENSE file that accompanies this project for the terms of use.
 
-
 ## Installation
 
-You need `node` and `npm`. Just run:
+You need `node` (v18+) and `npm`. Install dependencies and build:
 
 ```
+npm install
 npm run build
 ```
 
-to build it for production, then open `dist/index.html` with your favourite browser.
+Then preview the production build:
 
-For a development build, that you can debug with a browser, use:
+```
+npm run preview
+```
+
+For development with hot module replacement:
 
 ```
 npm run dev
 ```
 
+## Development
+
+The codebase is written in TypeScript with strict mode enabled.
+
+**Lint** (ESLint with typescript-eslint):
+```
+npm run lint
+npm run lint:fix
+```
+
+**Type check**:
+```
+npm run typecheck
+```
+
+A pre-commit hook (husky + lint-staged) runs ESLint and type checking automatically on staged files.
 
 ## Usage
 
 Here are a few examples to help you start:
 
-- [Basic API](https://sbd.danilop.net/?import=examples/basic-api.json)
-- [S3 Processing](https://sbd.danilop.net/?import=examples/s3-processing.json)
-- [Firehose Processing API](https://sbd.danilop.net/?import=examples/firehose.json)
-- [Streaming Analytics](https://sbd.danilop.net/?import=examples/stream-test.json)
-- [Some IoT](https://sbd.danilop.net/?import=examples/iot.json)
-- [All Together Now](https://sbd.danilop.net/?import=examples/full-app.json)
-
+- [Basic API](?import=examples/basic-api.json)
+- [S3 Processing](?import=examples/s3-processing.json)
+- [Firehose Processing API](?import=examples/firehose.json)
+- [Streaming Analytics](?import=examples/stream-test.json)
+- [Some IoT](?import=examples/iot.json)
+- [All Together Now](?import=examples/full-app.json)
 
 ## Dependencies
 
-This code depends on:
-- [Vis.js](http://visjs.org)
-- [js-yaml](http://nodeca.github.io/js-yaml/)
+- [Bootstrap 5](https://getbootstrap.com)
+- [Vis.js Network](https://visjs.github.io/vis-network/docs/network/)
+- [Font Awesome 6](https://fontawesome.com)
+- [js-yaml](https://github.com/nodeca/js-yaml)
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js/)
-- [jszip](https://stuk.github.io/jszip/)
-- [font-awesome](http://fontawesome.io)
-- [JQuery](https://jquery.com)
+- [JSZip](https://stuk.github.io/jszip/)
+- [Vite](https://vite.dev) (build tool)
+- [TypeScript](https://www.typescriptlang.org) (type system)
+- [ESLint](https://eslint.org) + [typescript-eslint](https://typescript-eslint.io) (linting)

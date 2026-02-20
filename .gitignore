@@ -1,5 +1,40 @@
-.DS_Store
-.vscode
+# Dependencies
 node_modules/
-dist/main.*
-dist/img/vis/*
+
+# Build output
+dist/
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite
+.vite/
+vite.config.*.timestamp-*
+
+# ESLint
+.eslintcache
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode
+.idea
+
+# Test tooling
+.playwright-mcp/
+
+# Migration tooling
+.claude/
+
+# npm
+*.tgz

@@ -5,9 +5,10 @@
   <title>Serverless by Design</title>
 
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
 
   <style type="text/css">
     html,
@@ -50,55 +51,53 @@
 
   <div class="container-fluid">
     <div id="header">
-      <form class="form-inline" id="mainForm">
+      <form class="d-flex flex-wrap align-items-center gap-2" id="mainForm">
         <a href="./">
-          <img src="img/logo.png" alt="Serverless by Design - Think. Build. Repeat" height="50" class="mr-2">
+          <img src="img/logo.png" alt="Serverless by Design - Think. Build. Repeat" height="50" class="me-2">
         </a>
         <div class="btn-toolbar" role="toolbar" aria-label="Button Toolbar">
-          <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Build">
-            <button type="button" class="btn btn-success thin-line" data-target="#helpModal" data-toggle="modal" title="Help">
-              <span class="fa fa-question"></span>
+          <div class="btn-group btn-group-sm me-2" role="group" aria-label="Build">
+            <button type="button" class="btn btn-success thin-line" data-bs-target="#helpModal" data-bs-toggle="modal" title="Help">
+              <span class="fa-solid fa-question"></span>
               <br>
               <small>Help</small>
             </button>
             <button type="button" class="btn btn-primary thin-line" id="importButton" title="Import">
-              <span class="fa fa-upload"></span>
+              <span class="fa-solid fa-upload"></span>
               <br>
               <small>Import</small>
             </button>
             <button type="button" class="btn btn-info thin-line" id="exportButton" title="Export">
-              <span class="fa fa-download"></span>
+              <span class="fa-solid fa-download"></span>
               <br>
               <small>Export</small>
             </button>
             <button type="button" class="btn btn-secondary thin-line" id="screenshotButton" title="Screenshot">
-              <span class="fa fa-camera"></span>
+              <span class="fa-solid fa-camera"></span>
               <br>
               <small>Picture</small>
             </button>
-            <button type="button" class="btn btn-dark thin-line" data-target="#physicsContainer" data-toggle="collapse" title="Physics">
-              <span class="fa fa-cog"></span>
+            <button type="button" class="btn btn-dark thin-line" data-bs-target="#physicsContainer" data-bs-toggle="collapse" title="Physics">
+              <span class="fa-solid fa-gear"></span>
               <br>
               <small>Physics</small>
             </button>
             <button type="button" class="btn btn-warning thin-line" id="buildButton" title="Build">
-              <span class="fa fa-wrench"></span>
+              <span class="fa-solid fa-wrench"></span>
               <br>
               <small>Build</small>
             </button>
           </div>
         </div>
-        <div class="form-group">
-          <input type="text" class="form-control-sm mr-2" id="appName" placeholder="Application Name">
-          <select class="form-control-sm mr-2" id="runtime">
-            <option value="nodejs8.10">Node.js 8.10</option>
-            <option value="python3.7">Python 3.7</option>
+        <div class="mb-3">
+          <input type="text" class="form-control-sm me-2" id="appName" placeholder="Application Name">
+          <select class="form-select-sm me-2" id="runtime">
           </select>
-          <select class="form-control-sm mr-2" id="engine">
+          <select class="form-select-sm me-2" id="engine">
             <option value="sam">AWS SAM</option>
             <option value="servfrmwk">Serverless Framework</option>
           </select>
-          <select class="form-control-sm" id="deployment">
+          <select class="form-select-sm" id="deployment">
           </select>
         </div>
       </form>
@@ -106,31 +105,29 @@
     <div id="physicsContainer" class="collapse"></div>
     <div id="networkContainer"></div>
 
-    <div id="nodeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div id="nodeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="nodeModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="nodeModalTitle">Title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form clas="form" id="nodeForm">
-              <div class="form-group row">
+            <form class="form" id="nodeForm">
+              <div class="mb-3 row">
                 <label for="nodeTypeSelect" class="col-sm-2 col-form-label">Type</label>
                 <div class="col-sm-10">
-                  <select class="form-control selectpicker" id="nodeTypeSelect">
+                  <select class="form-select" id="nodeTypeSelect">
                   </select>
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="mb-3 row">
                 <label for="nodeId" class="col-sm-2 col-form-label">ID</label>
                 <div class="col-sm-10">
                   <input type="text" class="form-control" id="nodeId" pattern="[A-Za-z0-9-]+" placeholder="Only letters, hyphen and numbers, CamelCase suggested">
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="mb-3 row">
                 <label for="nodeDescription" class="col-sm-2 col-form-label">Description</label>
                 <div class="col-sm-10">
                   <textarea class="form-control" rows="3" id="nodeDescription" placeholder="Optional"></textarea>
@@ -138,7 +135,7 @@
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary" id="nodeButtonOK">OK</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               </div>
             </form>
           </div>
@@ -146,24 +143,22 @@
       </div>
     </div>
 
-    <div id="importModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div id="importModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Import</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <h5 class="modal-title" id="importModalTitle">Import</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form clas="form" id="importForm">
-              <div class="form-group">
-                <label for="nodeDescription">Please paste the JSON data here</label>
+            <form class="form" id="importForm">
+              <div class="mb-3">
+                <label for="importData">Please paste the JSON data here</label>
                 <textarea class="form-control" rows="10" id="importData" placeholder="JSON Data"></textarea>
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary" id="importButtonOK">OK</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               </div>
             </form>
           </div>
@@ -171,14 +166,12 @@
       </div>
     </div>
 
-    <div id="helpModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div id="helpModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="helpModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Help</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <h5 class="modal-title" id="helpModalTitle">Help</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <p>Welcome to
@@ -186,44 +179,31 @@
             <ul>
               <li>An application is a network of
                 <strong>nodes</strong> (serverless resources, such as Lambda functions or S3 buckets) connected by
-                <strong>edges</strong> (their relationships, for example a trigger or a data flow)
-                <li>
-                  <strong>Edit</strong> an application adding nodes and edges following an
-                  <strong>event-driven</strong> design
-                  <li>
-                    <strong>Import</strong> a previously exported application to continue working on it
-                    <li>Choose a
-                      <strong>runtime</strong>, and
-                      <strong>build</strong> your application (for example, using AWS SAM)
-                      <li>Optionally use <strong>canary</strong> or <strong>linear</strong> deployments for your future updates
-                      <li>Edit
-                        <strong>templates</strong> and code files for the final configuratons before deploying the application
-                        <li>
-                          <strong>Export</strong> an application to save it for later use in a JSON file
-                          <li>Take a
-                            <strong>picture</strong> of the application architecture to have a visual representation to share
-                            <li>Fine tune the
-                              <strong>physics</strong> used to place nodes and edges on the screen, for example enable/disable it
-                              or choose another solver
+                <strong>edges</strong> (their relationships, for example a trigger or a data flow)</li>
+              <li><strong>Edit</strong> an application adding nodes and edges following an
+                <strong>event-driven</strong> design</li>
+              <li><strong>Import</strong> a previously exported application to continue working on it</li>
+              <li>Choose a <strong>runtime</strong>, and
+                <strong>build</strong> your application (for example, using AWS SAM)</li>
+              <li>Optionally use <strong>canary</strong> or <strong>linear</strong> deployments for your future updates</li>
+              <li>Edit <strong>templates</strong> and code files for the final configurations before deploying the application</li>
+              <li><strong>Export</strong> an application to save it for later use in a JSON file</li>
+              <li>Take a <strong>picture</strong> of the application architecture to have a visual representation to share</li>
+              <li>Fine tune the <strong>physics</strong> used to place nodes and edges on the screen, for example enable/disable it
+                or choose another solver</li>
             </ul>
             <p>Here are a few examples to help you start:</p>
             <ul>
-              <li>
-                <a href="?import=examples/basic-api.json">Basic API</a>
-                <li>
-                  <a href="?import=examples/s3-processing.json">S3 Processing</a>
-                  <li>
-                    <a href="?import=examples/firehose.json">Firehose Processing API</a>
-                    <li>
-                      <a href="?import=examples/stream-test.json">Streaming Analytics</a>
-                      <li>
-                        <a href="?import=examples/iot.json">Some IoT</a>
-                        <li>
-                          <a href="?import=examples/full-app.json">All Together Now</a>
+              <li><a href="?import=examples/basic-api.json">Basic API</a></li>
+              <li><a href="?import=examples/s3-processing.json">S3 Processing</a></li>
+              <li><a href="?import=examples/firehose.json">Firehose Processing API</a></li>
+              <li><a href="?import=examples/stream-test.json">Streaming Analytics</a></li>
+              <li><a href="?import=examples/iot.json">Some IoT</a></li>
+              <li><a href="?import=examples/full-app.json">All Together Now</a></li>
             </ul>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
           </div>
         </div>
       </div>
@@ -272,19 +252,27 @@
     }
   </style>
 
-  <!-- YAML support -->
-  <!-- <script src="./js/js-yaml.min.js"></script> -->
+  <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
-  <!-- ZIP file creation -->
-  <!-- <script src="./js/jszip.min.js"></script> -->
+  <div id="confirmModal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmYes">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Save files -->
-  <!-- <script src="./js/Blob.js"></script> -->
-  <!-- <script src="./js/canvas-toBlob.js"></script> -->
-  <!-- <script src="./js/FileSaver.min.js"></script> -->
-
-  <!-- Main logic -->
-  <script src="./main.js"></script>
+  <script type="module" src="/src/index.ts"></script>
 
 </body>
 
