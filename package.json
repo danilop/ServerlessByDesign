@@ -26,16 +26,16 @@
     "lint-staged": "^16.2.7",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0",
-    "vite": "^6.0.0"
+    "vite": "^7.3.1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.0.0",
-    "bootstrap": "^5.0.0",
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "bootstrap": "^5.3.8",
     "file-saver": "^2.0.5",
-    "js-yaml": "^4.0.0",
-    "jszip": "^3.10.0",
-    "vis-data": "^7.0.0",
-    "vis-network": "^9.0.0"
+    "js-yaml": "^4.1.1",
+    "jszip": "^3.10.1",
+    "vis-data": "^8.0.3",
+    "vis-network": "^10.0.2"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
