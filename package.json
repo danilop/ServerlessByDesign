@@ -21,6 +21,7 @@
     "@types/bootstrap": "^5.2.10",
     "@types/file-saver": "^2.0.7",
     "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.18.0",
     "eslint": "^10.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
@@ -41,5 +42,8 @@
     "src/**/*.{js,ts}": [
       "eslint --fix"
     ]
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
   }
 }
