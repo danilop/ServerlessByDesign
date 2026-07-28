@@ -33,7 +33,7 @@
     "@fortawesome/fontawesome-free": "^7.2.0",
     "bootstrap": "^5.3.8",
     "file-saver": "^2.0.5",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^4.3.0",
     "jszip": "^3.10.1",
     "vis-data": "^8.0.4",
     "vis-network": "^10.1.0"
