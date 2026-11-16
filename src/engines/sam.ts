@@ -12,7 +12,7 @@ interface RuntimeConfig {
 }
 
 const runtimes: Record<string, RuntimeConfig> = {
-  'nodejs22.x': {
+  'nodejs24.x': {
     fileExtension: 'mjs',
     handler: 'handler',
     startingCode:
@@ -25,7 +25,7 @@ const runtimes: Record<string, RuntimeConfig> = {
 };
 `
   },
-  'nodejs20.x': {
+  'nodejs22.x': {
     fileExtension: 'mjs',
     handler: 'handler',
     startingCode:
