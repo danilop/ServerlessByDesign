@@ -13,7 +13,7 @@ interface RuntimeConfig {
 }
 
 const runtimes: Record<string, RuntimeConfig> = {
-  'nodejs22.x': {
+  'nodejs24.x': {
     fileExtension: 'mjs',
     gitignore: `node_modules/
 .serverless/
@@ -31,7 +31,7 @@ const runtimes: Record<string, RuntimeConfig> = {
 };
 `
   },
-  'nodejs20.x': {
+  'nodejs22.x': {
     fileExtension: 'mjs',
     gitignore: `node_modules/
 .serverless/
